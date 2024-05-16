@@ -2,7 +2,6 @@ const { RestClientV2 } = require('bitget-api') //node module
 const RSI = require('calc-rsi') //node module
 const { Utils } = require('./utils.js')
 
-
 class BitgetApi{
     constructor() {
         this.API_PASS = 'ApiRsa052024';
