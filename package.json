@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "bitget-api": "^2.0.5",
+    "calc-rsi": "^1.0.0"
+  }
+}
