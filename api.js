@@ -95,24 +95,3 @@ class BitgetApi{
     }
 }
 exports.BitgetApi = BitgetApi;
-
-
-// For public-only API calls, simply don't provide a key & secret or set them to undefined
-// const client = new RestClientV2();
-
-// client
-//   .getSpotAccount()
-//   .then((result) => {
-//     console.log('getSpotAccount result: ', result);
-//   })
-//   .catch((err) => {
-//     console.error('getSpotAccount error: ', err);
-//   });
-
-
-
-
-        // Example usage
-        // const closingPrices = [100, 110, 105, 115, 120, 130, 140, 150, 145, 155];
-        // const rsi = utils.calculateRSI(closingPrices);
-        // console.log(rsi);
