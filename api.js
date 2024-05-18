@@ -45,13 +45,13 @@ class BitgetApi{
         this.utils = new Utils()
 
     }
-    getTickerData(sTicker){
+    getTickerData(sTicker, sTimeFrame, sLimit){
         return new Promise((resolve, reject) => {
             this.client.getFuturesCandles({
                 symbol: sTicker,
                 productType: 'USDT-FUTURES',
-                granularity: '1H',
-                limit: '50',
+                granularity: sTimeFrame,
+                limit: sLimit,
             })
             .then((aResponse) => {
                 let res = []
