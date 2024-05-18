@@ -138,6 +138,7 @@ class EngulfingTrade {
         const oTradeLog = this.aTrade.pop()
         oTradeLog.exitTime = oCandle.timestamp
         oTradeLog.exit = this.iStopLoss
+        oTradeLog.result = this.iTradeDirection === 0 ? this.iStopLoss - oTradeLog.entry : oTradeLog.entry - this.iStopLoss
         this.aTrade.push(oTradeLog)
         console.log(`exit trade: ${oCandle.timestamp}  -  direction: ${this.iTradeDirection}  -  exitLevel: ${this.iStopLoss} - ${oCandle.close}`)
         if(bSLHit){
