@@ -81,6 +81,7 @@ class rsiDiv {
     }
 
     async findRsiDiv(){
+        let bMsgSend = false
         for(let i = 0; i < this.aRsiHigh.length -1 ; i++){
             //i = the latest high low point in the rsi
             if(!this.utils.isOneOfLatestCandles(this.aRsiHigh[i].timestamp)){
@@ -90,19 +91,23 @@ class rsiDiv {
                     const rsiDiff = this.aRsiHigh[i].rsi / this.aRsiHigh[j].rsi
                     const courseDiff = this.aRsiHigh[i].high / this.aRsiHigh[j].high
                     if(this.isDivergence(rsiDiff, courseDiff) && !this.areCandleNeighbor(this.aRsiHigh[i], this.aRsiHigh[j])){
-                        await this.utils.ntfyMe(this.ntfyTopic, {
-                            pair: this.sTicker,
-                            timestamp1: this.aRsiHigh[i].timestamp,
-                            timestamp2: this.aRsiHigh[j].timestamp
-                        })
-                        .then(() => {
-                            console.log(`RSI Div: ${this.aRsiHigh[j].timestamp}  -  ${this.aRsiHigh[i].timestamp}`)
-                            j = this.aRsiHigh.length //only send msg once
-                        })
-                        .catch((oErr) => {
-                            console.log(oErr)
-                            j = this.aRsiHigh.length //only send msg once
-                        })
+                        if(bMsgSend){
+                            bMsgSend = true
+                        } else{
+                            await this.utils.ntfyMe(this.ntfyTopic, {
+                                pair: this.sTicker,
+                                timestamp1: this.aRsiHigh[i].timestamp,
+                                timestamp2: this.aRsiHigh[j].timestamp
+                            })
+                            .then(() => {
+                                console.log(`RSI Div: ${this.aRsiHigh[j].timestamp}  -  ${this.aRsiHigh[i].timestamp}`)
+                                j = this.aRsiHigh.length //only send msg once
+                            })
+                            .catch((oErr) => {
+                                console.log(oErr)
+                                j = this.aRsiHigh.length //only send msg once
+                            })
+                        }
                     }
                 }
             }
@@ -117,18 +122,23 @@ class rsiDiv {
                     const rsiDiff = this.aRsiLow[i].rsi / this.aRsiLow[j].rsi
                     const courseDiff = this.aRsiLow[i].low / this.aRsiLow[j].low
                     if(this.isDivergence(rsiDiff, courseDiff) && !this.areCandleNeighbor(this.aRsiLow[i], this.aRsiLow[j])){
-                        await this.utils.ntfyMe(this.ntfyTopic, {
-                            pair: this.sTicker,
-                            timestamp1: this.aRsiLow[i].timestamp,
-                            timestamp2: this.aRsiLow[j].timestamp
-                        }).then(() => {
-                            console.log(`RSI Div: ${this.aRsiLow[j].timestamp}  -  ${this.aRsiLow[i].timestamp}`)
-                            j = this.aRsiLow.length //only send msg once
-                        })
-                        .catch((oErr) => {
-                            console.log(oErr)
-                            j = this.aRsiLow.length //only send msg once
-                        })
+                        if(bMsgSend){
+                            bMsgSend = true
+                        } else{
+                            await this.utils.ntfyMe(this.ntfyTopic, {
+                                pair: this.sTicker,
+                                timestamp1: this.aRsiLow[i].timestamp,
+                                timestamp2: this.aRsiLow[j].timestamp
+                            })
+                            .then(() => {
+                                console.log(`RSI Div: ${this.aRsiLow[j].timestamp}  -  ${this.aRsiLow[i].timestamp}`)
+                                j = this.aRsiLow.length //only send msg once
+                            })
+                            .catch((oErr) => {
+                                console.log(oErr)
+                                j = this.aRsiLow.length //only send msg once
+                            })
+                        }
                     }
                 }
             }
@@ -159,7 +169,7 @@ class rsiDiv {
     }
     areCandleNeighbor(oCandle1, oCandle2){
         //check delta of timestamps if the candles are neighbor of each other
-        return this.utils.getDelta(parseInt(oCandle1.timestamp.split(', ')[1].slice(0,2), parseInt(oCandle2.timestamp.split(', ')[1].slice(0,2)))) <= 1 ? true : false
+        return this.utils.getDelta(parseInt(oCandle1.timestamp.split(', ')[1].slice(0,2)), parseInt(oCandle2.timestamp.split(', ')[1].slice(0,2))) <= 1 ? true : false
     }
 
 
