@@ -1,5 +1,6 @@
-const { convertArrayToCSV } = require('convert-array-to-csv')
+// const { convertArrayToCSV } = require('convert-array-to-csv')
 const fs = require('fs')
+const axios = require('axios')
 
 const XLSX = require('xlsx')
 
@@ -10,43 +11,43 @@ class Utils{
     }
 
     //aData = array with objects
-    saveArrayToCSV(aDataObjects){
-        // const header = ['number', 'first', 'last', 'handle'];
-        // const dataArrays = [
-        //     [1, 'Mark', 'Otto', '@mdo'],
-        //     [2, 'Jacob', 'Thornton', '@fat'],
-        //     [3, 'Larry', 'the Bird', '@twitter'],
-        // ];
-        // const csvFromArrayOfArrays = convertArrayToCSV(dataArrays, {
-        //     header,
-        //     separator: ';'
-        // });
-        // const aDataObjects = [
-        //     {
-        //         number: 1,
-        //         first: 'Mark',
-        //         last: 'Otto',
-        //         handle: '@mdo',
-        //     },
-        //     {
-        //         number: 2,
-        //         first: 'Jacob',
-        //         last: 'Thornton',
-        //         handle: '@fat',
-        //     },
-        //     {
-        //         number: 3,
-        //         first: 'Larry',
-        //         last: 'the Bird',
-        //         handle: '@twitter',
-        //     },
-        // ];
+    // saveArrayToCSV(aDataObjects){
+    //     // const header = ['number', 'first', 'last', 'handle'];
+    //     // const dataArrays = [
+    //     //     [1, 'Mark', 'Otto', '@mdo'],
+    //     //     [2, 'Jacob', 'Thornton', '@fat'],
+    //     //     [3, 'Larry', 'the Bird', '@twitter'],
+    //     // ];
+    //     // const csvFromArrayOfArrays = convertArrayToCSV(dataArrays, {
+    //     //     header,
+    //     //     separator: ';'
+    //     // });
+    //     // const aDataObjects = [
+    //     //     {
+    //     //         number: 1,
+    //     //         first: 'Mark',
+    //     //         last: 'Otto',
+    //     //         handle: '@mdo',
+    //     //     },
+    //     //     {
+    //     //         number: 2,
+    //     //         first: 'Jacob',
+    //     //         last: 'Thornton',
+    //     //         handle: '@fat',
+    //     //     },
+    //     //     {
+    //     //         number: 3,
+    //     //         first: 'Larry',
+    //     //         last: 'the Bird',
+    //     //         handle: '@twitter',
+    //     //     },
+    //     // ];
         
-        const csvFromArrayOfObjects = convertArrayToCSV(aDataObjects)
-        const writeStream = fs.createWriteStream('result.csv');
-        writeStream.write(csvFromArrayOfObjects);
-        writeStream.end()
-    }
+    //     const csvFromArrayOfObjects = convertArrayToCSV(aDataObjects)
+    //     const writeStream = fs.createWriteStream('result.csv');
+    //     writeStream.write(csvFromArrayOfObjects);
+    //     writeStream.end()
+    // }
     saveArrayToXlsx(aDataObjects){
         var ws = XLSX.utils.json_to_sheet(aDataObjects);
         /* create workbook and export */
@@ -137,6 +138,18 @@ class Utils{
             }
         }
         return false
+    }
+
+    ntfyMe(sMsg){
+        axios.post('http://213.160.75.69/test', sMsg)
+        // axios.post('http://213.160.75.69/test', {
+        //     message: sMsg
+        // })
+        .then((response) => {
+            //console.log(response);
+        }, (error) => {
+            debugger
+        });
     }
       
 
