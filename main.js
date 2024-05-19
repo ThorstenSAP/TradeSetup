@@ -52,7 +52,7 @@ function handleTicker(sTicker){
 //   })();
 
 
-
+//for the server use https://github.com/foreversd/forever 
 const runner = cron.schedule('55 * * * *', async () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
 	console.log('crone running script')
 	for await (const sTicker of aTicker) {
