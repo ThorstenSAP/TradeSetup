@@ -23,9 +23,6 @@ const bitget = new BitgetApi()
 const aTicker = ['BTC', 'ETH', 'XRP', 'EOS', 'LTC', 'ADA', 'LINK', 'TRX', 'DOT', 'DOGE', 'SOL', 'MATIC', 'VET', 'BNB', 'UNI', 'ICP', 'AAVE', 'FIL', 'XLM', 'ATOM',
   'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'GALA', 'SAND', 'DYDX', 'CRV', 'NEAR', 'EGLD', 'KSM', 'AR', 'FTM', 'PEOPLE' ]
 
-// for (const sTicker of aTicker) {
-//     checkTicker(sTicker)
-// }
 
 function handleTicker(sTicker){
 	return new Promise((resolve, reject) => {
@@ -47,24 +44,18 @@ function handleTicker(sTicker){
 	})
 }
 
-
-// async () {
-// 	for (const sTicker of aTicker) {
-// 		await this.handleTicker(sTicker)
+// //terminal test
+// (async () => {
+// 	for await (const sTicker of aTicker) {
+// 		await handleTicker(sTicker)
 // 	}
-// }();
-(async () => {
+//   })();
+
+
+
+const runner = cron.schedule('55 * * * *', async () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
 	for await (const sTicker of aTicker) {
 		await handleTicker(sTicker)
 	}
-  })();
-
-
-
-
-// const runner = cron.schedule('57,12,27,42 * * * *', () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
-//   console.log('sending msg to ntfy')
-//   const utils = new Utils()
-//   utils.ntfyMe('sending msg every 15 min')
-// })
-// runner.start()
+})
+runner.start()

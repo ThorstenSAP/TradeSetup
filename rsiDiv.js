@@ -78,13 +78,13 @@ class rsiDiv {
         }
     }
 
-    findRsiDivHigh(){
+    findRsiDiv(){
         for(let i = this.aRsiHigh.length -1; i > 0 ; i--){
             //i = the latest high low point in the rsi
             for(let j = i-1; j > 0 ; j--){
                 const rsiDiff = this.aRsiHigh[j].rsi / this.aRsiHigh[i].rsi
                 const courseDiff = this.aRsiHigh[j].high / this.aRsiHigh[i].high
-                if(this.isDivergence(rsiDiff, courseDiff)){
+                if(this.isDivergence(rsiDiff, courseDiff) && this.utils.isOneOfLatestCandles(this.aRsiHigh[j].timestamp)){
                     this.utils.ntfyMe(this.ntfyTopic, {
                         pair: this.sTicker,
                         timestamp1: this.aRsiHigh[i].timestamp,
