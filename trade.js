@@ -138,20 +138,44 @@ class EngulfingTrade {
         const oTradeLog = this.aTrade.pop()
         oTradeLog.exitTime = oCandle.timestamp
         oTradeLog.exit = this.iStopLoss
-        oTradeLog.result = this.iTradeDirection === 0 ? this.iStopLoss - oTradeLog.entry : oTradeLog.entry - this.iStopLoss
-        this.aTrade.push(oTradeLog)
-        console.log(`exit trade: ${oCandle.timestamp}  -  direction: ${this.iTradeDirection}  -  exitLevel: ${this.iStopLoss} - ${oCandle.close}`)
+        
+        console.log(`exit trade: ${oCandle.timestamp}  -  direction: ${this.iTradeDirection}  -  exitLevel: ${this.iStopLoss - oCandle.close}`)
         if(bSLHit){
             console.log(`reason: SL Hit  -  result: ${this.iEntry - this.iStopLoss}`)
+
+            if(this.utils.getDirectionOfCandle(oCandle) === 0){
+                //bullish candle. Hence, Short trade
+                console.log(`reason: Opposite Engulfing  -  result: ${this.iEntry - oCandle.close}`)
+                oTradeLog.result = this.iEntry - oCandle.close
+
+            } else {
+                //bearish candle. Hence, Loong trade
+                console.log(`reason: Opposite Engulfing  -  result: ${oCandle.close - this.iEntry}`)
+                oTradeLog.result = oCandle.close - this.iEntry
+            }
+            oTradeLog.result = this.iEntry - this.iStopLoss
+            oTradeLog.percentage = (oTradeLog.result / this.iEntry ) *100
             console.log()
         } else {
-            console.log(`reason: Opposite Engulfing  -  result: ${this.iEntry - oCandle.close}`)
+            if(this.utils.getDirectionOfCandle(oCandle) === 0){
+                //bullish engulfing. Hence, Short trade
+                console.log(`reason: Opposite Engulfing  -  result: ${this.iEntry - oCandle.close}`)
+                oTradeLog.result = this.iEntry - oCandle.close
+
+            } else {
+                //bearish engulfing. Hence, Loong trade
+                console.log(`reason: Opposite Engulfing  -  result: ${oCandle.close - this.iEntry}`)
+                oTradeLog.result = oCandle.close - this.iEntry
+            }
+            oTradeLog.percentage = (oTradeLog.result / this.iEntry ) *100
             console.log()
         }
         this.bIsInTrade = false
         this.iTradeDirection = null
         this.iStopLoss = null
-
+        
+        
+        this.aTrade.push(oTradeLog)
     }
 
     getTradeLog(){
