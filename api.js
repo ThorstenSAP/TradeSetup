@@ -1,6 +1,7 @@
 const { RestClientV2 } = require('bitget-api') //node module
 const { Utils } = require('./utils.js')
 
+//https://www.bitget.com/api-doc/contract/market/Get-Candle-Data
 class BitgetApi{
     constructor() {
         this.API_PASS = 'ApiRsa052024';
