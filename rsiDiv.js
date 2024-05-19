@@ -9,7 +9,7 @@ class rsiDiv {
         this.utils = new Utils()
         this.sTicker = sTicker
         this.ntfyTopic = 'RsiDiv'
-        this.iUpperLvl = 65
+        this.iUpperLvl = 60
         this.iLowerLvl = 40
         this.aData = aData
         this.aRsiHigh = []
@@ -35,6 +35,7 @@ class rsiDiv {
             //latest candle always accept as high or low point.
             //check against level was already made
             this.aData[i].rsiHigh = true
+            this.aRsiHigh.push(this.aData[i])
         } else if(i <= this.aData.length -2){
             //if the rsi of the next day and the rsi of the previous day is lower than it is an rsi high
             if(this.aData[i-1].rsi < this.aData[i].rsi && this.aData[i+1].rsi < this.aData[i].rsi){
@@ -51,6 +52,7 @@ class rsiDiv {
             //latest candle always accept as high or low point.
             //check against level was already made
             this.aData[i].rsiLow = true
+            this.aRsiLow.push(this.aData[i])
         } else if(i <= this.aData.length -2){
             //if the rsi of the next day and the rsi of the previous day is lower than it is an rsi high
             if(this.aData[i-1].rsi > this.aData[i].rsi && this.aData[i+1].rsi > this.aData[i].rsi){
@@ -79,21 +81,44 @@ class rsiDiv {
     }
 
     findRsiDiv(){
-        for(let i = this.aRsiHigh.length -1; i > 0 ; i--){
+        for(let i = 0; i < this.aRsiHigh.length -1 ; i++){
             //i = the latest high low point in the rsi
-            for(let j = i-1; j > 0 ; j--){
-                const rsiDiff = this.aRsiHigh[j].rsi / this.aRsiHigh[i].rsi
-                const courseDiff = this.aRsiHigh[j].high / this.aRsiHigh[i].high
-                if(this.isDivergence(rsiDiff, courseDiff) && this.utils.isOneOfLatestCandles(this.aRsiHigh[j].timestamp)){
-                    this.utils.ntfyMe(this.ntfyTopic, {
-                        pair: this.sTicker,
-                        timestamp1: this.aRsiHigh[i].timestamp,
-                        timestamp2: this.aRsiHigh[j].timestamp
-                    })
-                    console.log(`RSI Div: ${this.aRsiHigh[i].timestamp}  -  ${this.aRsiHigh[j].timestamp}`)
+            if(!this.utils.isOneOfLatestCandles(this.aRsiHigh[i].timestamp)){
+                return
+            } else {
+                for(let j = i+1; j < this.aRsiHigh.length -1 ; j++){
+                    const rsiDiff = this.aRsiHigh[j].rsi / this.aRsiHigh[i].rsi
+                    const courseDiff = this.aRsiHigh[j].high / this.aRsiHigh[i].high
+                    if(this.isDivergence(rsiDiff, courseDiff) && this.utils.isOneOfLatestCandles(this.aRsiHigh[j].timestamp)){
+                        this.utils.ntfyMe(this.ntfyTopic, {
+                            pair: this.sTicker,
+                            timestamp1: this.aRsiHigh[i].timestamp,
+                            timestamp2: this.aRsiHigh[j].timestamp
+                        })
+                        console.log(`RSI Div: ${this.aRsiHigh[i].timestamp}  -  ${this.aRsiHigh[j].timestamp}`)
+                    }
                 }
             }
+        }
 
+        for(let i = 0; i < this.aRsiLow.length -1 ; i++){
+            //i = the latest high low point in the rsi
+            if(!this.utils.isOneOfLatestCandles(this.aRsiLow[i].timestamp)){
+                return
+            } else {
+                for(let j = i+1; j < this.aRsiLow.length -1 ; j++){
+                    const rsiDiff = this.aRsiLow[j].rsi / this.aRsiLow[i].rsi
+                    const courseDiff = this.aRsiLow[j].high / this.aRsiLow[i].high
+                    if(this.isDivergence(rsiDiff, courseDiff)){
+                        this.utils.ntfyMe(this.ntfyTopic, {
+                            pair: this.sTicker,
+                            timestamp1: this.aRsiLow[i].timestamp,
+                            timestamp2: this.aRsiLow[j].timestamp
+                        })
+                        console.log(`RSI Div: ${this.aRsiLow[i].timestamp}  -  ${this.aRsiLow[j].timestamp}`)
+                    }
+                }
+            }
         }
     }
     isDivergence(rsiDiff, courseDiff){
