@@ -3,8 +3,12 @@ const fs = require('fs')
 const axios = require('axios')
 
 const XLSX = require('xlsx')
+const RSI = require('calc-rsi') 
 
 class Utils{
+    constructor(){
+        
+    }
     convertMiliseconds(sMiliseconds){
         let date = new Date(parseInt(sMiliseconds))
         return date.toLocaleString('de')
@@ -140,16 +144,36 @@ class Utils{
         return false
     }
 
-    ntfyMe(sMsg){
-        axios.post('http://213.160.75.69/test', sMsg)
-        // axios.post('http://213.160.75.69/test', {
-        //     message: sMsg
-        // })
-        .then((response) => {
-            //console.log(response);
-        }, (error) => {
-            debugger
-        });
+    convertApiResponseForRsiCalc(aData){
+        const aPrevClose = []
+        for (let i = aData.length -1; i >= 0; i--) {
+            aPrevClose.push(aData[i].close)
+            // for (let j = i-1; j >= 0; j--) {
+            // } 
+        }
+        return aPrevClose
+    }
+    setRsi(aData){
+        const rsi = new RSI(this.convertApiResponseForRsiCalc(aData), 14)
+        rsi.calculate((err, data) => {
+            if (err) {
+                done(err);
+            } else if(data.length > 0) {
+                for (let i = aData.length -1; i >= 0; i--) {
+                    const oLastElement = data.pop()
+                    if(oLastElement.rsi){
+                        aData[i].rsi = oLastElement.rsi
+                    } else {
+                        aData[i].rsi = null
+                    }
+                }
+                
+            }
+        })
+
+        
+    }
+    
     }
       
 

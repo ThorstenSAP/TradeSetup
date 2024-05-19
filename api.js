@@ -1,5 +1,4 @@
 const { RestClientV2 } = require('bitget-api') //node module
-const RSI = require('calc-rsi') //node module
 const { Utils } = require('./utils.js')
 
 class BitgetApi{
@@ -63,26 +62,6 @@ class BitgetApi{
                         low: parseFloat(aCandle[3]),
                         close: parseFloat(aCandle[4]),
                         volume: parseFloat(aCandle[6])
-                    })
-                }
-                for (let i = res.length -1; i >= 0; i--) {
-                    const aPrevClose = []
-                    for (let j = i-1; j >= 0; j--) {
-                        aPrevClose.push(res[j].close)
-                    } 
-                    //res[i].aPrevClose = aPrevClose
-                    const rsi = new RSI(aPrevClose, 14)
-                    rsi.calculate((err, data) => {
-                        if (err) {
-                            done(err);
-                        } else if(data.length > 0) {
-                            const oLastElement = data.pop()
-                            if(oLastElement.rsi){
-                                res[i].rsi = oLastElement.rsi
-                            } else {
-                                res[i].rsi = null
-                            }
-                        }
                     })
                 }
                 
