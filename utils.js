@@ -174,6 +174,21 @@ class Utils{
         
     }
     
+
+    ntfyMe(topic, msg){
+        if(typeof msg === 'object'){
+            axios.post(`http://213.160.75.69/${topic}`, {
+                message: msg
+            })
+        } else {
+            // msg is probably a string
+            axios.post(`http://213.160.75.69/${topic}`, msg)
+        }
+        // .then((response) => {
+        //     console.log(response);
+        // }, (error) => {
+        //     console.log(error);
+        // });
     }
       
 

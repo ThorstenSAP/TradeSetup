@@ -1,6 +1,9 @@
 const cron = require('node-cron')
 const { BitgetApi } = require('./api.js') // https://www.bitget.com/api-doc/contract/market/Get-Candle-Data
 const { Engulfing } = require('./engulfing.js')
+const { Utils } = require('./utils.js')
+const { RsiDiv } = require('./rsiDiv.js')
+
 
 //Note that 1 * * * * will fire only on the first minute of every hour - 15:01:00, 16:01:00, etc.
 //const runner = cron.schedule('*/15 * * * *', () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
@@ -466,17 +469,29 @@ const { Engulfing } = require('./engulfing.js')
 //   }
 // ]
 
-
+const utils = new Utils()
 const engulfing = new Engulfing()
 const bitget = new BitgetApi()
-const aTicker = ['SHIBUSDT' ] //, 'DOTUSDT', 'SOLUSDT',
+const aTicker = ['ETHUSDT' ] //, 'SHIBUSDT', 'SOLUSDT',
 for (const sTicker of aTicker) {
-    bitget.getTickerData(sTicker, '1H', '1000')
+    bitget.getTickerData(sTicker, '1H', '50')
     .then(res => {
 		console.log()
 		console.log(`checking ${sTicker}`)
-		//engulfing.checkHistory(res)
-		engulfing.checkEngulfingTrade(res)
+    utils.setRsi(res)
+		engulfing.checkHistory(res)
+    const rsiDiv = new RsiDiv(res, sTicker)
+    rsiDiv.setRsiHighLows()
+    rsiDiv.findRsiDivHigh()
+		// engulfing.checkEngulfingTrade(res)
 	})
     .catch(err => {console.log(err)})
 }
+
+
+// const runner = cron.schedule('57,12,27,42 * * * *', () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
+//   console.log('sending msg to ntfy')
+//   const utils = new Utils()
+//   utils.ntfyMe('sending msg every 15 min')
+// })
+// runner.start()
