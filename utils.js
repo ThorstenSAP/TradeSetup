@@ -186,7 +186,7 @@ class Utils{
         const iCandleDay = parseInt(sTimestring.slice(0,2))
         const iCandleHour = parseInt(sTimestring.split(', ')[1].slice(0,2))
 
-        if(iCrntDay == iCandleDay && this.getDelta(iCrntHour, iCandleHour) <= 24){
+        if(iCrntDay == iCandleDay && this.getDelta(iCrntHour, iCandleHour) <= 2){
             //same day and it happend in the last two hours
             return true
         } 
@@ -204,19 +204,30 @@ class Utils{
     
 
     ntfyMe(topic, msg){
-        if(typeof msg === 'object'){
-            axios.post(`http://213.160.75.69/${topic}`, {
-                message: msg
-            })
-        } else {
-            // msg is probably a string
-            axios.post(`http://213.160.75.69/${topic}`, msg)
-        }
-        // .then((response) => {
-        //     console.log(response);
-        // }, (error) => {
-        //     console.log(error);
-        // });
+        return new Promise((res,rej) => {
+            if(typeof msg === 'object'){
+                axios.post(`http://213.160.75.69/${topic}`, {
+                    message: msg
+                })
+                .then((response) => {
+                    setTimeout(() => {res()}, 1000)
+                }, (error) => {
+                    console.log(error.response.data)
+                    rej(error.response.data);
+                });
+            } else {
+                // msg is probably a string
+                axios.post(`http://213.160.75.69/${topic}`, msg)
+                .then((response) => {
+                    setTimeout(() => {res()}, 1000)
+                }, (error) => {
+                    console.log(error.response.data)
+                    rej(error.response.data);
+                });
+            }
+
+        })
+        
     }
       
 

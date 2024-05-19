@@ -80,7 +80,7 @@ class rsiDiv {
         }
     }
 
-    findRsiDiv(){
+    async findRsiDiv(){
         for(let i = 0; i < this.aRsiHigh.length -1 ; i++){
             //i = the latest high low point in the rsi
             if(!this.utils.isOneOfLatestCandles(this.aRsiHigh[i].timestamp)){
@@ -95,7 +95,12 @@ class rsiDiv {
                             timestamp1: this.aRsiHigh[i].timestamp,
                             timestamp2: this.aRsiHigh[j].timestamp
                         })
-                        console.log(`RSI Div: ${this.aRsiHigh[i].timestamp}  -  ${this.aRsiHigh[j].timestamp}`)
+                        .then(() => {
+                            console.log(`RSI Div: ${this.aRsiHigh[j].timestamp}  -  ${this.aRsiHigh[i].timestamp}`)
+                        })
+                        .catch((oErr) => {
+                            console.log(oErr)
+                        })
                     }
                 }
             }
@@ -110,12 +115,16 @@ class rsiDiv {
                     const rsiDiff = this.aRsiLow[j].rsi / this.aRsiLow[i].rsi
                     const courseDiff = this.aRsiLow[j].high / this.aRsiLow[i].high
                     if(this.isDivergence(rsiDiff, courseDiff)){
-                        this.utils.ntfyMe(this.ntfyTopic, {
+                        await this.utils.ntfyMe(this.ntfyTopic, {
                             pair: this.sTicker,
                             timestamp1: this.aRsiLow[i].timestamp,
                             timestamp2: this.aRsiLow[j].timestamp
+                        }).then(() => {
+                            console.log(`RSI Div: ${this.aRsiLow[j].timestamp}  -  ${this.aRsiLow[i].timestamp}`)
                         })
-                        console.log(`RSI Div: ${this.aRsiLow[i].timestamp}  -  ${this.aRsiLow[j].timestamp}`)
+                        .catch((oErr) => {
+                            console.log(oErr)
+                        })
                     }
                 }
             }

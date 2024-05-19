@@ -21,7 +21,7 @@ const utils = new Utils()
 const engulfing = new Engulfing()
 const bitget = new BitgetApi()
 const aTicker = ['BTC', 'ETH', 'XRP', 'EOS', 'LTC', 'ADA', 'LINK', 'TRX', 'DOT', 'DOGE', 'SOL', 'MATIC', 'VET', 'BNB', 'UNI', 'ICP', 'AAVE', 'FIL', 'XLM', 'ATOM',
-  'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'GALA', 'SAND', 'DYDX', 'CRV', 'NEAR', 'EGLD', 'KSM', 'AR', 'FTM', 'PEOPLE' ]
+  'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'PEPE' ]
 
 
 function handleTicker(sTicker){
@@ -35,16 +35,16 @@ function handleTicker(sTicker){
 			const rsiDiv = new RsiDiv(res, sTicker)
 			rsiDiv.setRsiHighLows()
 			rsiDiv.findRsiDiv()
-			setTimeout(() => {resolve()}, 500)
+			setTimeout(() => {resolve()}, 1000)
 			})
 		.catch(err => {
 			console.log(err)
-			setTimeout(() => {reject()}, 500)
+			setTimeout(() => {reject()}, 1000)
 		})
 	})
 }
 
-// //terminal test
+//terminal test
 // (async () => {
 // 	for await (const sTicker of aTicker) {
 // 		await handleTicker(sTicker)
@@ -53,7 +53,7 @@ function handleTicker(sTicker){
 
 
 
-const runner = cron.schedule('55 * * * *', async () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
+const runner = cron.schedule('37,55 * * * *', async () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
 	console.log('crone running script')
 	for await (const sTicker of aTicker) {
 		await handleTicker(sTicker)
