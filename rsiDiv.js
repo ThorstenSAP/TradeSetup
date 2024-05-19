@@ -87,19 +87,21 @@ class rsiDiv {
                 return
             } else {
                 for(let j = i+1; j < this.aRsiHigh.length -1 ; j++){
-                    const rsiDiff = this.aRsiHigh[j].rsi / this.aRsiHigh[i].rsi
-                    const courseDiff = this.aRsiHigh[j].high / this.aRsiHigh[i].high
-                    if(this.isDivergence(rsiDiff, courseDiff) && this.utils.isOneOfLatestCandles(this.aRsiHigh[j].timestamp)){
-                        this.utils.ntfyMe(this.ntfyTopic, {
+                    const rsiDiff = this.aRsiHigh[i].rsi / this.aRsiHigh[j].rsi
+                    const courseDiff = this.aRsiHigh[i].high / this.aRsiHigh[j].high
+                    if(this.isDivergence(rsiDiff, courseDiff) && !this.areCandleNeighbor(this.aRsiHigh[i], this.aRsiHigh[j])){
+                        await this.utils.ntfyMe(this.ntfyTopic, {
                             pair: this.sTicker,
                             timestamp1: this.aRsiHigh[i].timestamp,
                             timestamp2: this.aRsiHigh[j].timestamp
                         })
                         .then(() => {
                             console.log(`RSI Div: ${this.aRsiHigh[j].timestamp}  -  ${this.aRsiHigh[i].timestamp}`)
+                            j = this.aRsiHigh.length //only send msg once
                         })
                         .catch((oErr) => {
                             console.log(oErr)
+                            j = this.aRsiHigh.length //only send msg once
                         })
                     }
                 }
@@ -112,18 +114,20 @@ class rsiDiv {
                 return
             } else {
                 for(let j = i+1; j < this.aRsiLow.length -1 ; j++){
-                    const rsiDiff = this.aRsiLow[j].rsi / this.aRsiLow[i].rsi
-                    const courseDiff = this.aRsiLow[j].high / this.aRsiLow[i].high
-                    if(this.isDivergence(rsiDiff, courseDiff)){
+                    const rsiDiff = this.aRsiLow[i].rsi / this.aRsiLow[j].rsi
+                    const courseDiff = this.aRsiLow[i].low / this.aRsiLow[j].low
+                    if(this.isDivergence(rsiDiff, courseDiff) && !this.areCandleNeighbor(this.aRsiLow[i], this.aRsiLow[j])){
                         await this.utils.ntfyMe(this.ntfyTopic, {
                             pair: this.sTicker,
                             timestamp1: this.aRsiLow[i].timestamp,
                             timestamp2: this.aRsiLow[j].timestamp
                         }).then(() => {
                             console.log(`RSI Div: ${this.aRsiLow[j].timestamp}  -  ${this.aRsiLow[i].timestamp}`)
+                            j = this.aRsiLow.length //only send msg once
                         })
                         .catch((oErr) => {
                             console.log(oErr)
+                            j = this.aRsiLow.length //only send msg once
                         })
                     }
                 }
@@ -136,18 +140,26 @@ class rsiDiv {
             return true
         } else if((rsiDiff < 1 && courseDiff < 1) || (rsiDiff > 1 && courseDiff > 1)){
             //both are falling or rising -> check for percentage difference
-            if ((0.99 <= courseDiff && courseDiff <= 1.01) && (rsiDiff <= 0.95 && rsiDiff >= 1.05) ||
-                (0.99 <= rsiDiff && rsiDiff <= 1.01) && ( courseDiff <= 0.95 && courseDiff >= 1.05)){
-                //one is moving more than 5% - the other one is moving 1%
-                return true
-            } else if (courseDiff * 1.25 < rsiDiff || courseDiff / 1.25 < rsiDiff){
+            if (courseDiff * 1.25 < rsiDiff || courseDiff / 1.25 < rsiDiff){
                 //rsi move more than 25% more than the course
                 return true
             }
+            // if ((0.99 <= courseDiff && courseDiff <= 1.01) && (rsiDiff <= 0.95 && rsiDiff >= 1.05) ||
+            //     (0.99 <= rsiDiff && rsiDiff <= 1.01) && ( courseDiff <= 0.95 && courseDiff >= 1.05)){
+            //     //one is moving more than 5% - the other one is moving 1%
+            //     return true
+            // } else if (courseDiff * 1.25 < rsiDiff || courseDiff / 1.25 < rsiDiff){
+            //     //rsi move more than 25% more than the course
+            //     return true
+            // }
         } else {
             return false
         }
 
+    }
+    areCandleNeighbor(oCandle1, oCandle2){
+        //check delta of timestamps if the candles are neighbor of each other
+        return this.utils.getDelta(parseInt(oCandle1.timestamp.split(', ')[1].slice(0,2), parseInt(oCandle2.timestamp.split(', ')[1].slice(0,2)))) <= 1 ? true : false
     }
 
 

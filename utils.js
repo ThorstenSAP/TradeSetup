@@ -186,7 +186,7 @@ class Utils{
         const iCandleDay = parseInt(sTimestring.slice(0,2))
         const iCandleHour = parseInt(sTimestring.split(', ')[1].slice(0,2))
 
-        if(iCrntDay == iCandleDay && this.getDelta(iCrntHour, iCandleHour) <= 2){
+        if(iCrntDay == iCandleDay && this.getDelta(iCrntHour, iCandleHour) == 0){
             //same day and it happend in the last two hours
             return true
         } 

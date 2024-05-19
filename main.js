@@ -23,10 +23,10 @@ const bitget = new BitgetApi()
 const aTicker = ['BTC', 'ETH', 'XRP', 'EOS', 'LTC', 'ADA', 'LINK', 'TRX', 'DOT', 'DOGE', 'SOL', 'MATIC', 'VET', 'BNB', 'UNI', 'ICP', 'AAVE', 'FIL', 'XLM', 'ATOM',
   'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'PEPE' ]
 
-
+// const aTicker = ['TRX']
 function handleTicker(sTicker){
 	return new Promise((resolve, reject) => {
-		bitget.getTickerData(`${sTicker}USDT`, '1H', '50')
+		bitget.getTickerData(`${sTicker}USDT`, '1H', '100')
 		.then(res => {
 			console.log()
 			console.log(`checking ${sTicker}`)
@@ -44,7 +44,7 @@ function handleTicker(sTicker){
 	})
 }
 
-//terminal test
+// terminal test
 // (async () => {
 // 	for await (const sTicker of aTicker) {
 // 		await handleTicker(sTicker)
@@ -53,7 +53,7 @@ function handleTicker(sTicker){
 
 
 
-const runner = cron.schedule('37,55 * * * *', async () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
+const runner = cron.schedule('55 * * * *', async () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
 	console.log('crone running script')
 	for await (const sTicker of aTicker) {
 		await handleTicker(sTicker)
