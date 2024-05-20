@@ -6,7 +6,8 @@ const XLSX = require('xlsx')
 const RSI = require('calc-rsi') 
 
 class Utils{
-    constructor(){
+    constructor(sNtfyTopic){
+        this.sNtfyTopic = sNtfyTopic
         
     }
     convertMiliseconds(sMiliseconds){
@@ -206,7 +207,7 @@ class Utils{
     ntfyMe(topic, msg){
         return new Promise((res,rej) => {
             if(typeof msg === 'object'){
-                axios.post(`http://213.160.75.69/${topic}`, {
+                axios.post(`http://213.160.75.69/${topic}${this.sNtfyTopic}`, {
                     message: msg
                 })
                 .then((response) => {
@@ -217,7 +218,7 @@ class Utils{
                 });
             } else {
                 // msg is probably a string
-                axios.post(`http://213.160.75.69/${topic}`, msg)
+                axios.post(`http://213.160.75.69/${topic}${this.sNtfyTopic}`, msg)
                 .then((response) => {
                     setTimeout(() => {res()}, 1000)
                 }, (error) => {

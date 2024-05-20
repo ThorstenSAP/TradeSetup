@@ -5,8 +5,8 @@ class rsiDiv {
     //compare those high and lows against the course highs or the course lows
     
     //mark corresponding candle in data array
-    constructor(aData, sTicker){
-        this.utils = new Utils()
+    constructor(aData, sTicker, sTimeFrame){
+        this.utils = new Utils(sTimeFrame)
         this.sTicker = sTicker
         this.ntfyTopic = 'RsiDiv'
         this.iUpperLvl = 60
@@ -26,7 +26,7 @@ class rsiDiv {
             }
             
         }
-        // this.logRSIHighsLows()
+        this.logRSIHighsLows()
 
     }
     getRSIHigh(i){
@@ -72,13 +72,11 @@ class rsiDiv {
     }
 
     logRSIHighsLows(){
-        console.log('highs')
         for (const oCandle of this.aData) {
             if(oCandle.rsiHigh){
                 console.log(`${oCandle.timestamp}  -  RSI: ${oCandle.rsi}`)
             }
         }
-        console.log('lows')
         for (const oCandle of this.aData) {
             if(oCandle.rsiLow){
                 console.log(`${oCandle.timestamp}  -  RSI: ${oCandle.rsi}`)

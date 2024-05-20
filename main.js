@@ -16,23 +16,21 @@ const { RsiDiv } = require('./rsiDiv.js')
 // runner.start()
 
 
-
 const utils = new Utils()
-const engulfing = new Engulfing()
 const bitget = new BitgetApi()
 const aTicker = ['BTC', 'ETH', 'XRP', 'EOS', 'LTC', 'ADA', 'LINK', 'TRX', 'DOT', 'DOGE', 'SOL', 'MATIC', 'VET', 'BNB', 'UNI', 'ICP', 'AAVE', 'FIL', 'XLM', 'ATOM',
   'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'PEPE' ]
 
 // const aTicker = ['TRX']
-function handleTicker(sTicker){
+function handleTicker(sTicker, sTimeFrame){
 	return new Promise((resolve, reject) => {
-		bitget.getTickerData(`${sTicker}USDT`, '1H', '100')
+		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '100')
 		.then(res => {
 			console.log()
 			console.log(`checking ${sTicker}`)
 			utils.setRsi(res)
 			// engulfing.checkHistory(res)
-			const rsiDiv = new RsiDiv(res, sTicker)
+			const rsiDiv = new RsiDiv(res, sTicker, sTimeFrame)
 			rsiDiv.setRsiHighLows()
 			rsiDiv.findRsiDiv()
 			setTimeout(() => {resolve()}, 1000)
@@ -53,10 +51,27 @@ function handleTicker(sTicker){
 
 
 //for the server use https://github.com/foreversd/forever 
-const runner = cron.schedule('55 * * * *', async () => { //runs the timer on xx:15, xx:30, xx:45 and xx:00
-	console.log('crone running script')
+const runner1H = cron.schedule('55 * * * *', async () => { //runs the timer on xx:55
+	console.log('crone running script -- ${new Date().toDateString()}:${new Date().toTimeString()}')
+	const sTimeFrame = '1H'
 	for await (const sTicker of aTicker) {
-		await handleTicker(sTicker)
+		await handleTicker(sTicker, sTimeFrame)
 	}
 })
-runner.start()
+const runner2H = cron.schedule('50 */2 * * *', async () => { //should run every 2 hours at min 50
+	console.log('crone running script -- ${new Date().toDateString()}:${new Date().toTimeString()}')
+	const sTimeFrame = '2H'
+	for await (const sTicker of aTicker) {
+		await handleTicker(sTicker, sTimeFrame)
+	}
+})
+const runner4H = cron.schedule('* 2,6,10,14,18,22 * * *', async () => { //should run every 4 hours
+	console.log('crone running script -- ${new Date().toDateString()}:${new Date().toTimeString()}')
+	const sTimeFrame = '4H'
+	for await (const sTicker of aTicker) {
+		await handleTicker(sTicker, sTimeFrame)
+	}
+})
+runner1H.start()
+runner2H.start()
+runner4H.start()
