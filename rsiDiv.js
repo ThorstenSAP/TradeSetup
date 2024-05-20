@@ -32,10 +32,13 @@ class rsiDiv {
     getRSIHigh(i){
         //i has to be at least 1
         if(i === this.aData.length -1){
-            //latest candle always accept as high or low point.
-            //check against level was already made
-            this.aData[i].rsiHigh = true
-            this.aRsiHigh.push(this.aData[i])
+            //latest candle only check against previous candle and set level
+            if(this.aData[i-1].rsi < this.aData[i].rsi && this.aData[i].rsi >= this.iUpperLvl){
+                this.aData[i].rsiHigh = true
+                this.aRsiHigh.push(this.aData[i])
+            } else {
+                this.aData[i].rsiHigh = false
+            }
         } else if(i <= this.aData.length -2){
             //if the rsi of the next day and the rsi of the previous day is lower than it is an rsi high
             if(this.aData[i-1].rsi < this.aData[i].rsi && this.aData[i+1].rsi < this.aData[i].rsi){
@@ -49,10 +52,13 @@ class rsiDiv {
     getRSILow(i){
         //i has to be at least 1
         if(i === this.aData.length -1){
-            //latest candle always accept as high or low point.
-            //check against level was already made
-            this.aData[i].rsiLow = true
-            this.aRsiLow.push(this.aData[i])
+            //latest candle only check against previous candle and set level
+            if(this.aData[i-1].rsi > this.aData[i].rsi && this.aData[i].rsi <= this.iUpperLvl){
+                this.aData[i].rsiLow = true
+                this.aRsiLow.push(this.aData[i])
+            } else {
+                this.aData[i].rsiLow = false
+            }
         } else if(i <= this.aData.length -2){
             //if the rsi of the next day and the rsi of the previous day is lower than it is an rsi high
             if(this.aData[i-1].rsi > this.aData[i].rsi && this.aData[i+1].rsi > this.aData[i].rsi){
