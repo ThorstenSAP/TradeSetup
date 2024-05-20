@@ -91,7 +91,7 @@ class rsiDiv {
         for(let i = 0; i < this.aRsiHigh.length -1 ; i++){
             //i = the latest high low point in the rsi
             if(!this.utils.isOneOfLatestCandles(this.aRsiHigh[i].timestamp)){
-                return
+                break
             } else {
                 for(let j = i+1; j < this.aRsiHigh.length -1 ; j++){
                     const rsiDiff = this.aRsiHigh[i].rsi / this.aRsiHigh[j].rsi
@@ -122,7 +122,7 @@ class rsiDiv {
         for(let i = 0; i < this.aRsiLow.length -1 ; i++){
             //i = the latest high low point in the rsi
             if(!this.utils.isOneOfLatestCandles(this.aRsiLow[i].timestamp)){
-                return
+                break
             } else {
                 for(let j = i+1; j < this.aRsiLow.length -1 ; j++){
                     const rsiDiff = this.aRsiLow[i].rsi / this.aRsiLow[j].rsi

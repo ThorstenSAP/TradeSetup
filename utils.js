@@ -182,7 +182,7 @@ class Utils{
     isOneOfLatestCandles(sTimestring){
         const date = new Date()
         const iCrntDay = new Date().getDate()
-        const iCrntHour = date.getHours()
+        const iCrntHour = date.getHours() //+2 //server time are in utc
         const iCandleDay = parseInt(sTimestring.slice(0,2))
         const iCandleHour = parseInt(sTimestring.split(', ')[1].slice(0,2))
 
