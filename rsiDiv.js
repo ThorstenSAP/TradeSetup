@@ -26,7 +26,7 @@ class rsiDiv {
             }
             
         }
-        this.logRSIHighsLows()
+        //this.logRSIHighsLows()
 
     }
     getRSIHigh(i){
