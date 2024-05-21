@@ -191,12 +191,12 @@ class Utils{
             //same day and it happend in the last two hours
             return true
         } 
-        else if(iCrntHour <= 8){
-            if((iCandleDay == iCrntDay - 1 && iCandleHour >= 20) || (iCandleDay == iCrntDay && iCandleHour <= 8)){
-                //the engulfing occured between yesterday 20.00pm and today 08.00 am
-                return true
-            }
-        } 
+        // else if(iCrntHour <= 8){
+        //     if((iCandleDay == iCrntDay - 1 && iCandleHour >= 20) || (iCandleDay == iCrntDay && iCandleHour <= 8)){
+        //         //the engulfing occured between yesterday 20.00pm and today 08.00 am
+        //         return true
+        //     }
+        // } 
         else {
             return false
         }

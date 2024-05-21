@@ -33,15 +33,24 @@ class rsiDiv {
         //i has to be at least 1
         if(i === this.aData.length -1){
             //latest candle only check against previous candle and set level
-            if(this.aData[i-1].rsi < this.aData[i].rsi && this.aData[i].rsi >= this.iUpperLvl){
+            if(this.aData[i-2].rsi < this.aData[i].rsi && this.aData[i-1].rsi < this.aData[i].rsi && this.aData[i].rsi >= this.iUpperLvl){
                 this.aData[i].rsiHigh = true
                 this.aRsiHigh.push(this.aData[i])
             } else {
                 this.aData[i].rsiHigh = false
             }
-        } else if(i <= this.aData.length -2){
-            //if the rsi of the next day and the rsi of the previous day is lower than it is an rsi high
-            if(this.aData[i-1].rsi < this.aData[i].rsi && this.aData[i+1].rsi < this.aData[i].rsi){
+        } else if(i == this.aData.length -2){
+            //if the rsi of the next two days and the rsi of the previous two candles is lower than it is an rsi high
+            if(this.aData[i-2].rsi < this.aData[i].rsi && this.aData[i-1].rsi < this.aData[i].rsi && this.aData[i+1].rsi < this.aData[i].rsi){
+                this.aData[i].rsiHigh = true
+                this.aRsiHigh.push(this.aData[i])
+            } else {
+                    this.aData[i].rsiLow = false
+                }
+        } else if(i < this.aData.length -2){
+            //can look  back than two candles
+            if((this.aData[i-1].rsi < this.aData[i].rsi && this.aData[i+1].rsi < this.aData[i].rsi) && 
+                (this.aData[i-2].rsi < this.aData[i].rsi && this.aData[i+2].rsi < this.aData[i].rsi)){
                 this.aData[i].rsiHigh = true
                 this.aRsiHigh.push(this.aData[i])
             } else {
@@ -53,30 +62,42 @@ class rsiDiv {
         //i has to be at least 1
         if(i === this.aData.length -1){
             //latest candle only check against previous candle and set level
-            if(this.aData[i-1].rsi > this.aData[i].rsi && this.aData[i].rsi <= this.iUpperLvl){
+            if(this.aData[i-2].rsi > this.aData[i].rsi && this.aData[i-1].rsi > this.aData[i].rsi && this.aData[i].rsi <= this.iUpperLvl){
                 this.aData[i].rsiLow = true
                 this.aRsiLow.push(this.aData[i])
             } else {
                 this.aData[i].rsiLow = false
             }
-        } else if(i <= this.aData.length -2){
+        } else if(i == this.aData.length -2){
             //if the rsi of the next day and the rsi of the previous day is lower than it is an rsi high
-            if(this.aData[i-1].rsi > this.aData[i].rsi && this.aData[i+1].rsi > this.aData[i].rsi){
+            if(this.aData[i-2].rsi > this.aData[i].rsi && this.aData[i-1].rsi > this.aData[i].rsi && this.aData[i+1].rsi > this.aData[i].rsi){
                 this.aData[i].rsiLow = true
                 this.aRsiLow.push(this.aData[i])
             } else {
                 this.aData[i].rsiLow = false
             }
+        } else if(i < this.aData.length -2){
+            //can look  back than two candles
+            if((this.aData[i-1].rsi > this.aData[i].rsi && this.aData[i+1].rsi > this.aData[i].rsi) && 
+                (this.aData[i-2].rsi > this.aData[i].rsi && this.aData[i+2].rsi > this.aData[i].rsi)){
+                this.aData[i].rsiLow = true
+                this.aRsiLow.push(this.aData[i])
+            } else {
+                this.aData[i].rsiLow = false
+            }
+        
         }
 
     }
 
     logRSIHighsLows(){
+        console.log('highs')
         for (const oCandle of this.aData) {
             if(oCandle.rsiHigh){
                 console.log(`${oCandle.timestamp}  -  RSI: ${oCandle.rsi}`)
             }
         }
+        console.log('lows')
         for (const oCandle of this.aData) {
             if(oCandle.rsiLow){
                 console.log(`${oCandle.timestamp}  -  RSI: ${oCandle.rsi}`)
@@ -152,12 +173,13 @@ class rsiDiv {
         if((rsiDiff < 1 && courseDiff > 1) || (rsiDiff > 1 && courseDiff < 1)){
             //one is falling the other one is rising
             return true
-        } else if((rsiDiff < 1 && courseDiff < 1) || (rsiDiff > 1 && courseDiff > 1)){
-            //both are falling or rising -> check for percentage difference
-            if (courseDiff * 1.25 < rsiDiff || courseDiff / 1.25 < rsiDiff){
-                //rsi move more than 25% more than the course
-                return true
-            }
+        } 
+            // else if((rsiDiff < 1 && courseDiff < 1) || (rsiDiff > 1 && courseDiff > 1)){
+            // //both are falling or rising -> check for percentage difference
+            // if (courseDiff * 1.25 < rsiDiff || courseDiff / 1.25 < rsiDiff){
+            //     //rsi move more than 25% more than the course
+            //     return true
+            // }
             // if ((0.99 <= courseDiff && courseDiff <= 1.01) && (rsiDiff <= 0.95 && rsiDiff >= 1.05) ||
             //     (0.99 <= rsiDiff && rsiDiff <= 1.01) && ( courseDiff <= 0.95 && courseDiff >= 1.05)){
             //     //one is moving more than 5% - the other one is moving 1%
@@ -166,7 +188,7 @@ class rsiDiv {
             //     //rsi move more than 25% more than the course
             //     return true
             // }
-        } else {
+         else {
             return false
         }
 
