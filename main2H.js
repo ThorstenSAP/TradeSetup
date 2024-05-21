@@ -52,7 +52,7 @@ function handleTicker(sTicker, sTimeFrame){
 
 //for the server use https://github.com/foreversd/forever 
 const runner2H = cron.schedule('50 */2 * * *', async () => { //should run every 2 hours at min 50
-	console.log('crone running script -- ${new Date().toDateString()}:${new Date().toTimeString()}')
+	console.log(`crone running script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
 	const sTimeFrame = '2H'
 	for await (const sTicker of aTicker) {
 		await handleTicker(sTicker, sTimeFrame)
