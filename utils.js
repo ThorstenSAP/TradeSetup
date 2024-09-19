@@ -202,6 +202,16 @@ class Utils{
         }
 
     }
+
+    setSma(aData, iSma){
+        let iSum = 0
+        for (let index = 0; index <= iSma; index++) {
+            let iIndex = (aData.length -1) - index //latest element minus the last index
+
+            iSum = iSum + aData[iIndex].close
+        }
+        aData[aData.length-1][`sma${iSma}`] = iSum/iSma
+    }
     
 
     ntfyMe(topic, msg){

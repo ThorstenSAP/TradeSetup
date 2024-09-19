@@ -47,6 +47,7 @@ class BitgetApi{
     }
     getTickerData(sTicker, sTimeFrame, sLimit){
         return new Promise((resolve, reject) => {
+            // this.client.getFuturesHistoricCandles({
             this.client.getFuturesCandles({
                 symbol: sTicker,
                 productType: 'USDT-FUTURES',
