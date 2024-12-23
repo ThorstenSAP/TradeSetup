@@ -18,23 +18,25 @@ const { RsiDiv } = require('./rsiDiv.js')
 
 const utils = new Utils()
 const bitget = new BitgetApi()
-const aTicker = ['BTC', 'ETH', 'XRP', 'EOS', 'LTC', 'ADA', 'LINK', 'TRX', 'DOT', 'DOGE', 'SOL', 'MATIC', 'VET', 'BNB', 'UNI', 'ICP', 'AAVE', 'FIL', 'XLM', 'ATOM',
-  'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'PEPE' ]
+const aTicker = ['BTC', 'ETH', 'XRP', 'SOL', 'ADA', 'UNI', 'LINK', 'VET', 'AAVE', 'DOGE'] 
 
 // const aTicker = ['VET']
 function handleTicker(sTicker, sTimeFrame){
 	return new Promise((resolve, reject) => {
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '100')
-		.then(res => {
-			console.log()
-			console.log(`checking ${sTicker}`)
-			utils.setRsi(res)
-			// engulfing.checkHistory(res)
-			const rsiDiv = new RsiDiv(res, sTicker, sTimeFrame)
-			rsiDiv.setRsiHighLows()
-			rsiDiv.findRsiDiv()
-			setTimeout(() => {resolve()}, 1000)
-			})
+		.then(async (aData) => {
+			if(utils.isEveMorningStar(aData)){
+				await this.utils.ntfyMe('BullBearSignal', {
+					pair: this.sTicker,
+					msg: 'EveMorningStar'
+				})
+			} else if (utils.isEngulfing(aData[aData.length - 1], aData[aData.length - 2])){
+				await this.utils.ntfyMe('BullBearSignal', {
+					pair: this.sTicker,
+					msg: 'Engulfing'
+				})
+			}
+		})
 		.catch(err => {
 			console.log(err)
 			setTimeout(() => {reject()}, 1000)
@@ -50,10 +52,15 @@ function handleTicker(sTicker, sTimeFrame){
 //   })();
 
 
-//for the server use https://github.com/foreversd/forever 
-
-const runner4H = cron.schedule('* 2,6,10,14,18,22 * * *', async () => { //should run every 4 hours
+//https://www.npmjs.com/package/node-cron
+//minute 2 of hour 01, 05, 09, 13, 17 and 21
+const runner4H = cron.schedule('2 1,5,9,13,17,21 * * *', async () => { 
 	console.log(`crone running script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
+	
+	await this.utils.ntfyMe('Log', {
+		pair: this.sTicker,
+		msg: 'Running'
+	})
 	const sTimeFrame = '4H'
 	for await (const sTicker of aTicker) {
 		await handleTicker(sTicker, sTimeFrame)

@@ -14,6 +14,13 @@ class Utils{
         let date = new Date(parseInt(sMiliseconds))
         return date.toLocaleString('de')
     }
+    getMidnightMilisecondsMinusXDays(iDay){
+        let now = new Date()
+        now.setHours(0, 0, 0, 0)
+        // now.setDate(now - iDay)
+
+        return now.getTime()
+    }
 
     //aData = array with objects
     // saveArrayToCSV(aDataObjects){
@@ -89,28 +96,66 @@ class Utils{
         return -1
     }
 
+    isBodyCandle(oCandle){
+        let fBody, fCandle
+        if(this.getDirectionOfCandle(oCandle) === 0){
+            fBody = oCandle.close - oCandle.open
+            fCandle = oCandle.high - oCandle.low
+            
+        } else {
+            fBody = oCandle.open - oCandle.close
+            fCandle = oCandle.low - oCandle.high
 
-    // isCandleInRange(aData, index, offSet){
-    //     let step = 1
-    //     let bInsideCandle = false
-    //     while (index > 0 && index - step > 0 && step <= offSet) {
-    //         const oCrntCandle = aData[index]
-    //         const oCandleToCheck = aData[index-step]
+        }
+        
+        if(fBody/fCandle >= 0.6){
+            return true
+        } else {
+            return false
+        }
+    }
 
-    //         if(this.getDirectionOfCandle(oCrntCandle) === 0){
-    //             //bull case
-    //             if (oCrntCandle.open > oCandleToCheck.close){
-    //                 return false
-    //             }
-    //         } else {
-    //             if (oCandleToCheck.open < oCrntCandle.close){
-    //                 return false
-    //             }
-    //         }
-    //     }
-    //     return true
-    // }
+    isCandleDoji(oCandle){
+        let fBody, fCandle
+        if(this.getDirectionOfCandle(oCandle) === 0){
+            fBody = oCandle.close - oCandle.open
+            fCandle = oCandle.high - oCandle.low
+            
+        } else {
+            fBody = oCandle.open - oCandle.close
+            fCandle = oCandle.low - oCandle.high
 
+        }
+        
+        if(fBody/fCandle <= 0.25){
+            return true
+        } else {
+            return false
+        }
+    }
+
+    isEveMorningStar(aCandles){
+        const oLastCandle = aCandles[aCandles.length - 1]
+        const oPrevCandle = aCandles[aCandles.length - 2]
+        const oPrevPrevCandle = aCandles[aCandles.length - 3]
+        if(this.isBodyCandle(oLastCandle)){
+            if(this.getDirectionOfCandle(oLastCandle) === 0){
+                //bullish candle
+                if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 1)){
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                //bearish case
+                if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 0)){
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+    }
 
     isEngulfing(oPrevCandle, oCrntCandle){
         if(this.getDirectionOfCandle(oPrevCandle) === 0){
@@ -217,7 +262,7 @@ class Utils{
     ntfyMe(topic, msg){
         return new Promise((res,rej) => {
             if(typeof msg === 'object'){
-                axios.post(`http://213.160.75.69/${topic}${this.sNtfyTopic}`, {
+                axios.post(`http://87.106.59.125/${topic}`, {
                     message: msg
                 })
                 .then((response) => {
@@ -228,7 +273,7 @@ class Utils{
                 });
             } else {
                 // msg is probably a string
-                axios.post(`http://213.160.75.69/${topic}${this.sNtfyTopic}`, msg)
+                axios.post(`http://87.106.59.125/${topic}`, msg)
                 .then((response) => {
                     setTimeout(() => {res()}, 1000)
                 }, (error) => {

@@ -52,6 +52,7 @@ class BitgetApi{
                 symbol: sTicker,
                 productType: 'USDT-FUTURES',
                 granularity: sTimeFrame,
+                // startTime: this.utils.getMidnightMilisecondsMinusXDays(sLimit),
                 limit: sLimit,
             })
             .then((aResponse) => {
