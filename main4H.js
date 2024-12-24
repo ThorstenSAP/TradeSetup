@@ -1,4 +1,5 @@
 const cron = require('node-cron')
+const CronJob = require('cron').CronJob;
 const { BitgetApi } = require('./api.js') // https://www.bitget.com/api-doc/contract/market/Get-Candle-Data
 const { Engulfing } = require('./engulfing.js')
 const { Utils } = require('./utils.js')
@@ -59,7 +60,7 @@ function handleTicker(sTicker, sTimeFrame){
 
 //https://www.npmjs.com/package/node-cron
 //minute 2 of hour 01, 05, 09, 13, 17 and 21
-const runner4H = cron.schedule('2 1,5,9,13,17,21 * * *', async () => { 
+const runner4H = new CronJob('33 1,5,9,13,17,21 * * *', async () => { 
 	console.log(`crone running 4h script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
 	
 	await utils.ntfyMe('Log', `crone running 4h script`)
