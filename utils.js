@@ -108,7 +108,7 @@ class Utils{
 
         }
         
-        if(fBody/fCandle >= 0.6){
+        if(fBody/fCandle <= -0.5 || fBody/fCandle >= 0.5){
             return true
         } else {
             return false
@@ -127,7 +127,7 @@ class Utils{
 
         }
         
-        if(fBody/fCandle <= 0.25){
+        if(-0.25 <= fBody/fCandle && fBody/fCandle <= 0.25){
             return true
         } else {
             return false
@@ -135,9 +135,10 @@ class Utils{
     }
 
     isEveMorningStar(aCandles){
-        const oLastCandle = aCandles[aCandles.length - 1]
-        const oPrevCandle = aCandles[aCandles.length - 2]
-        const oPrevPrevCandle = aCandles[aCandles.length - 3]
+        //provides latest candle. Hence, look back further one
+        const oLastCandle = aCandles[aCandles.length - 2] //prev candel
+        const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
+        const oPrevPrevCandle = aCandles[aCandles.length - 4] //three candle back
         if(this.isBodyCandle(oLastCandle)){
             if(this.getDirectionOfCandle(oLastCandle) === 0){
                 //bullish candle
@@ -157,33 +158,37 @@ class Utils{
         }
     }
 
-    isEngulfing(oPrevCandle, oCrntCandle){
+    isEngulfing(aCandles){
+        const oLastCandle = aCandles[aCandles.length - 2] //prev candel
+        const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
         if(this.getDirectionOfCandle(oPrevCandle) === 0){
             //prev candle was bullish. Hence, look for bearish engulfing
-            if(oCrntCandle.open >= oPrevCandle.close && oCrntCandle.close < oPrevCandle.open){
+            if(oLastCandle.open >= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){
                 return true //bearish engulfing
             }
         } else {
-            if(oCrntCandle.open <= oPrevCandle.close && oCrntCandle.close > oPrevCandle.open){
+            if(oLastCandle.open <= oPrevCandle.close && oLastCandle.close > oPrevCandle.open){
                 return true //bullish engulfing
             }
         }
         return false
     }
 
-    isCloudCover(oCrntCandle, oPrevCandle){
-        if(this.getDirectionOfCandle(oCrntCandle) === 0){
+    isCloudCover(aCandles){
+        const oLastCandle = aCandles[aCandles.length - 2] //prev candel
+        const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
+        if(this.getDirectionOfCandle(oLastCandle) === 0){
             //bull case
-            if (oCrntCandle.open > oPrevCandle.close && oCrntCandle.close > oPrevCandle.open){ //red candle followed by green
+            if (oLastCandle.open > oPrevCandle.close && oLastCandle.close > oPrevCandle.open){ //red candle followed by green
                 return true
-            } else  if (oCrntCandle.open > oPrevCandle.open && oCrntCandle.close > oPrevCandle.close){ //green on green 
+            } else  if (oLastCandle.open > oPrevCandle.open && oLastCandle.close > oPrevCandle.close){ //green on green 
                 return true
             }
         } else {
             //bear case
-            if (oCrntCandle.open <= oPrevCandle.close && oCrntCandle.close < oPrevCandle.open){ //green candle followed by red candle
+            if (oLastCandle.open <= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){ //green candle followed by red candle
                 return true
-            } else  if (oCrntCandle.open < oPrevCandle.open && oCrntCandle.close < oPrevCandle.close){ //red on red
+            } else  if (oLastCandle.open < oPrevCandle.open && oLastCandle.close < oPrevCandle.close){ //red on red
                 return true
             }
         }

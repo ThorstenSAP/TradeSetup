@@ -3,24 +3,30 @@ const { Utils } = require('./utils.js')
 
 const utils = new Utils()
 const bitget = new BitgetApi()
-const aTicker = ['BTC', 'ETH', 'XRP', 'SOL', 'ADA', 'UNI', 'LINK', 'VET', 'AAVE', 'DOGE'] 
+// const aTicker = ['BTC', 'ETH', 'XRP', 'SOL', 'ADA', 'UNI', 'LINK', 'VET', 'AAVE', 'DOGE'] 
 // ['EOS', 'LTC', 'ADA', 'LINK', 'TRX', 'DOT', 'DOGE', 'SOL', 'MATIC', 'VET', 'BNB', 'UNI', 'ICP', 'AAVE', 'FIL', 'XLM', 'ATOM',
 //   'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'PEPE' ]
 
 
-// const aTicker = ['VET']
+const aTicker = ['SOL']
 function handleTicker(sTicker, sTimeFrame, iSma1, iSma2){
 	return new Promise((resolve, reject) => {
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '100')
-		.then(async (res) => {
-            //calc 10 and 30 sma
-            //check if candle crossed both
-			// utils.setSma(res, iSma1)
-			// utils.setSma(res, iSma2)
-			if(utils.isEveMorningStar(res)){
-				await this.utils.ntfyMe(this.ntfyTopic, {
-					pair: this.sTicker,
+		.then(async (aData) => {
+			if(utils.isEveMorningStar(aData)){
+				await utils.ntfyMe('BullBearSignal', {
+					pair: sTicker,
 					msg: 'EveMorningStar'
+				})
+			} else if (utils.isEngulfing(aData)){
+				await utils.ntfyMe('BullBearSignal', {
+					pair: sTicker,
+					msg: 'Engulfing'
+				})
+			} else if (utils.isCloudCover(aData)){
+				await utils.ntfyMe('BullBearSignal', {
+					pair: sTicker,
+					msg: 'CloudCover'
 				})
 			}
 			setTimeout(() => {resolve()}, 1000)
@@ -44,12 +50,12 @@ async function check4H(){
     }
 }
 async function testNTFY() {
-	await utils.ntfyMe('test', {
-		pair: 'test',
-		msg: 'EveMorningStar'
-	})
+	// await utils.ntfyMe('test', {
+	// 	pair: 'test',
+	// 	msg: 'EveMorningStar'
+	// })
+	await utils.ntfyMe('test', `crone running 4h script`)
 }
-//weeklyCheck() //Problem only 13 weekly candles are returned
-// dailyCheck() //SMAs are way off
-			// Candles are starting at 18.00 cet - 16.00 utc
-			testNTFY()			
+
+// check4H()			
+testNTFY()

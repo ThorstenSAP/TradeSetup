@@ -26,14 +26,19 @@ function handleTicker(sTicker, sTimeFrame){
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '100')
 		.then(async (aData) => {
 			if(utils.isEveMorningStar(aData)){
-				await this.utils.ntfyMe('BullBearSignal', {
-					pair: this.sTicker,
+				await utils.ntfyMe('BullBearSignal', {
+					pair: sTicker,
 					msg: 'EveMorningStar'
 				})
-			} else if (utils.isEngulfing(aData[aData.length - 1], aData[aData.length - 2])){
-				await this.utils.ntfyMe('BullBearSignal', {
-					pair: this.sTicker,
+			} else if (utils.isEngulfing(aData)){
+				await utils.ntfyMe('BullBearSignal', {
+					pair: sTicker,
 					msg: 'Engulfing'
+				})
+			} else if (utils.isCloudCover(aData)){
+				await utils.ntfyMe('BullBearSignal', {
+					pair: sTicker,
+					msg: 'CloudCover'
 				})
 			}
 		})
@@ -55,15 +60,27 @@ function handleTicker(sTicker, sTimeFrame){
 //https://www.npmjs.com/package/node-cron
 //minute 2 of hour 01, 05, 09, 13, 17 and 21
 const runner4H = cron.schedule('2 1,5,9,13,17,21 * * *', async () => { 
-	console.log(`crone running script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
+	console.log(`crone running 4h script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
 	
-	await this.utils.ntfyMe('Log', {
-		pair: this.sTicker,
-		msg: 'Running'
-	})
+	await utils.ntfyMe('Log', `crone running 4h script`)
 	const sTimeFrame = '4H'
 	for await (const sTicker of aTicker) {
 		await handleTicker(sTicker, sTimeFrame)
 	}
 })
+
 runner4H.start()
+
+// const runner4HTest = cron.schedule('2 1,5,9,11,17,21 * * *', async () => { 
+// 	console.log(`crone running script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
+	
+// 	await utils.ntfyMe('Log', {
+// 		msg: 'Running'
+// 	})
+// 	const sTimeFrame = '4H'
+// 	for await (const sTicker of aTicker) {
+// 		await handleTicker(sTicker, sTimeFrame)
+// 	}
+// })
+// runner4HTest.start()
+
