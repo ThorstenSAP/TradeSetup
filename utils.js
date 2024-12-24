@@ -161,38 +161,45 @@ class Utils{
     isEngulfing(aCandles){
         const oLastCandle = aCandles[aCandles.length - 2] //prev candel
         const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
-        if(this.getDirectionOfCandle(oPrevCandle) === 0){
-            //prev candle was bullish. Hence, look for bearish engulfing
-            if(oLastCandle.open >= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){
-                return true //bearish engulfing
-            }
+        if(!this.isBodyCandle(oLastCandle)){
+            return false
         } else {
-            if(oLastCandle.open <= oPrevCandle.close && oLastCandle.close > oPrevCandle.open){
-                return true //bullish engulfing
+            if(this.getDirectionOfCandle(oPrevCandle) === 0){
+                //prev candle was bullish. Hence, look for bearish engulfing
+                if(oLastCandle.open >= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){
+                    return true //bearish engulfing
+                }
+            } else {
+                if(oLastCandle.open <= oPrevCandle.close && oLastCandle.close > oPrevCandle.open){
+                    return true //bullish engulfing
+                }
             }
         }
-        return false
     }
 
     isCloudCover(aCandles){
         const oLastCandle = aCandles[aCandles.length - 2] //prev candel
         const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
-        if(this.getDirectionOfCandle(oLastCandle) === 0){
-            //bull case
-            if (oLastCandle.open > oPrevCandle.close && oLastCandle.close > oPrevCandle.open){ //red candle followed by green
-                return true
-            } else  if (oLastCandle.open > oPrevCandle.open && oLastCandle.close > oPrevCandle.close){ //green on green 
-                return true
-            }
+        if(!this.isBodyCandle(oLastCandle)){
+            return false
         } else {
-            //bear case
-            if (oLastCandle.open <= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){ //green candle followed by red candle
-                return true
-            } else  if (oLastCandle.open < oPrevCandle.open && oLastCandle.close < oPrevCandle.close){ //red on red
-                return true
+            if(this.getDirectionOfCandle(oLastCandle) === 0){
+                //bull case
+                if (oLastCandle.open > oPrevCandle.close && oLastCandle.close > oPrevCandle.open){ //red candle followed by green
+                    return true
+                } else  if (oLastCandle.open > oPrevCandle.open && oLastCandle.close > oPrevCandle.close){ //green on green 
+                    return true
+                }
+            } else {
+                //bear case
+                if (oLastCandle.open <= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){ //green candle followed by red candle
+                    return true
+                } else  if (oLastCandle.open < oPrevCandle.open && oLastCandle.close < oPrevCandle.close){ //red on red
+                    return true
+                }
             }
         }
-        return false
+        
     }
 
     convertApiResponseForRsiCalc(aData){

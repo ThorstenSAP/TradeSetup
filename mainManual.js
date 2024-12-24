@@ -8,7 +8,7 @@ const bitget = new BitgetApi()
 //   'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'PEPE' ]
 
 
-const aTicker = ['SOL']
+const aTicker = ['BTC']
 function handleTicker(sTicker, sTimeFrame, iSma1, iSma2){
 	return new Promise((resolve, reject) => {
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '100')
@@ -57,5 +57,5 @@ async function testNTFY() {
 	await utils.ntfyMe('test', `crone running 4h script`)
 }
 
-// check4H()			
-testNTFY()
+check4H()			
+// testNTFY()
