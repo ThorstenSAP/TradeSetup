@@ -59,7 +59,7 @@ function handleTicker(sTicker, sTimeFrame){
 
 //https://www.npmjs.com/package/node-cron
 //minute 2 of hour 01, 05, 09, 13, 17 and 21
-const runner4H = cron.schedule('2 1,5,9,13,17,21 * * *', async () => { 
+const runner4H = cron.schedule('42 1,5,9,13,17,21 * * *', async () => { 
 	console.log(`crone running 4h script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
 	
 	await utils.ntfyMe('Log', `crone running 4h script`)
