@@ -59,7 +59,7 @@ function handleTicker(sTicker, sTimeFrame){
 
 //https://www.npmjs.com/package/node-cron
 //minute 2 of hour 01, 05, 09, 13, 17 and 21
-//ionos server ist auf utc zeit
+//server ist auf utc zeit
 const runner4H = cron.schedule('2 0,4,8,12,16,20 * * *', async () => { 
 	console.log(`crone running 4h script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
 	
