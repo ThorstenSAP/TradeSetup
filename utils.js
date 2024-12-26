@@ -127,7 +127,7 @@ class Utils{
 
         }
         
-        if(-0.25 <= fBody/fCandle && fBody/fCandle <= 0.25){
+        if(-0.35 <= fBody/fCandle && fBody/fCandle <= 0.35){
             return true
         } else {
             return false
