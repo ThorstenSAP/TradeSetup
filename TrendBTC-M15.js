@@ -394,6 +394,7 @@ function handleTicker(sTicker, sTimeFrame){
 }
 
 //stops script from ending  -> even when not started
+//on server use it with node module forever
 const runnerM15 = cron.schedule('0,15,30,45 * * * *', async () => { 
 	console.log(`crone running BTC-M15 script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
 	
