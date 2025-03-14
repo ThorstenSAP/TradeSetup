@@ -204,7 +204,9 @@ function analyzeTrend(aData){
                 // if(i == 28){
                 //     debugger
                 // }
-                if(i == aData.length - 1){
+                if(i != aData.length - 1){
+                    this.bNTFYME = false
+                } else {
                     this.bNTFYME = true
                 }
                 
