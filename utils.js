@@ -76,6 +76,51 @@ class Utils{
         }
     }
 
+    getTrendThresholds(oCandle){
+        if(this.getDirectionOfCandle(oCandle) == 0){
+            return {
+                fAbsHigh: oCandle.high,
+                fTrendThreshold: oCandle.low
+            }
+        } else {
+            return {
+                fAbsHigh: oCandle.low,
+                fTrendThreshold: oCandle.high
+            }
+        }
+    }
+    //Liquidation bull case
+    getUpperThreshold(value1, value2){
+        if(value1 > value2){
+            return value1
+        } else {
+            return value2
+        }
+    }
+    getBullLiquidationBoxStop(value1, value2){
+        if (value1 < value2){
+            return value1
+        } else {
+            return value2
+        }
+    }
+
+    //Liq bear case
+    getLowerThreshold(value1, value2){
+        if(value1 < value2){
+            return value1
+        } else {
+            return value2
+        }
+    }
+    getBearLiquidationBoxStop(value1, value2){
+        if (value1 > value2){
+            return value1
+        } else {
+            return value2
+        }
+    }
+
     //if the candle is an inside candle return the index of the corresponding surrounding candle
     isInsideCandle(index, aData, offSet){
         let step = 2 //do not check the engulfed candle. Check the candle prior the engulfing
@@ -127,7 +172,7 @@ class Utils{
 
         }
         
-        if(-0.35 <= fBody/fCandle && fBody/fCandle <= 0.35){
+        if(-0.37 <= fBody/fCandle && fBody/fCandle <= 0.37){
             return true
         } else {
             return false
@@ -268,6 +313,35 @@ class Utils{
             iSum = iSum + aData[iIndex].close
         }
         aData[aData.length-1][`sma${iSma}`] = iSum/iSma
+    }
+
+    getMACDSignal(closingPrices){
+        if(closingPrices.length <= 30){
+            return undefined
+        } else {
+            //is signalLine above or below MACD Line
+            let macd = this.calculateMACD(closingPrices)
+            let signal = this.calculateEMA(macd, 9)
+
+            return macd < signal ? 1 : 0 //macd below signal == bearish else bullish
+        }
+    }
+    calculateMACD(closingPrices) {
+        const ema12 = this.calculateEMA(closingPrices, 12);
+        const ema26 = this.calculateEMA(closingPrices, 26);
+        const macd = ema12 - ema26;
+        
+        return macd;
+    }
+      
+    calculateEMA(closingPrices, period) {
+        const k = 2 / (period + 1);
+        let ema = closingPrices[0];
+        for (let i = 1; i < closingPrices.length; i++) {
+          ema = (closingPrices[i] * k) + (ema * (1 - k));
+        }
+      
+        return ema;
     }
     
 
