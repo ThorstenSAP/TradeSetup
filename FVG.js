@@ -23,12 +23,14 @@ function handleTicker(sTicker, sTimeFrame){
 					if(aData[aData.length - 4].high < aData[aData.length - 2].high){
 						//FVG
 						console.log(`Bull FVG ${aData[aData.length - 3].timestamp}`)
+						await utils.ntfyMe(`FVG-${sTimeFrame}`, `Bull FVG ${aData[aData.length - 3].timestamp}`)
 					}
 				} else {
 					//bear FVG
 					if(aData[aData.length - 4].low > aData[aData.length - 2].high){
 						//FVG
 						console.log(`Bear FVG ${aData[aData.length - 3].timestamp}`)
+						await utils.ntfyMe(`FVG-${sTimeFrame}`, `Bear FVG ${aData[aData.length - 3].timestamp}`
 					}
 				}
 			}
@@ -80,6 +82,7 @@ runnerH4.start()
 // 	return new Promise((resolve, reject) => {
 // 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '100')
 // 		.then(async (aData) => {
+// 			// await utils.ntfyMe(`FVG-${sTimeFrame}`, `test`)
 // 			for (let i = aData.length -2; i > 0; i--) {
 // 				//-2 start on prev candle
 // 				if(utils.isStrongPush(aData[i])){
@@ -96,7 +99,7 @@ runnerH4.start()
 
 // 					}
 // 				}
-// 			  }
+// 			}
 // 			setTimeout(() => {resolve()}, 1000)
 // 			})
 // 		.catch(err => {
@@ -107,6 +110,6 @@ runnerH4.start()
 // }
 
 // async function main () {
-// 	await testFVG('BTC', '4H')
+// 	await testFVG('BTC', '1H')
 // }
 // main()
