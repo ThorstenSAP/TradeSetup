@@ -140,6 +140,25 @@ class Utils{
         }
         return -1
     }
+    isStrongPush(oCandle){
+        let fBody, fCandle
+        if(this.getDirectionOfCandle(oCandle) === 0){
+            fBody = oCandle.close - oCandle.open
+            fCandle = oCandle.high - oCandle.low
+            
+        } else {
+            fBody = oCandle.open - oCandle.close
+            fCandle = oCandle.low - oCandle.high
+
+        }
+        
+        if(fBody/fCandle <= -0.75 || fBody/fCandle >= 0.75){
+            return true
+        } else {
+            return false
+        }
+
+    }
 
     isBodyCandle(oCandle){
         let fBody, fCandle
