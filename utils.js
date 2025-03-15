@@ -140,6 +140,34 @@ class Utils{
         }
         return -1
     }
+    isInsideOutFormation(oCandle, oPrevCandle, oPrevPrevCandle){
+        if(!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) && 
+            this.isCandleInsidePrevCandleRange(oPrevCandle, oPrevPrevCandle)){
+                return true
+            } else {
+                return false
+            }
+    }
+    isCandleInsidePrevCandleRange(oCandle, oPrevCandle){
+        //returns true for yes (isInside), false for no (isOutside)
+        //close outside
+        if(this.getDirectionOfCandle(oCandle) == 0){
+            //bullish candle
+            if(oCandle.close > oPrevCandle.high || oCandle.high > oPrevCandle.high || oCandle.low < oPrevCandle.low){
+                return false //range expanded 
+            } else {
+                return true //did close within the higgh of the prev candle
+            }
+        } else {
+            //bearish candle
+            if(oCandle.close < oPrevCandle.low || oCandle.low < oPrevCandle.low || oCandle.high > oPrevCandle.high){
+                return false //range expanded
+            } else {
+                return true //did close within the low of the prev candle
+            }
+
+        }
+    }
     isStrongPush(oCandle){
         let fBody, fCandle
         if(this.getDirectionOfCandle(oCandle) === 0){
