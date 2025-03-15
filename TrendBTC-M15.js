@@ -93,9 +93,6 @@ function handleAbsoluteNewHighLow(cTrend, oCandle, index){
 
 function handleTrendChange(cTrend, oCandle, iCandleDirection, index){
     // let cOrder = createOrderOfTrendChange(oCandle, cTrend.fTrendThreshold, iCandleDirection)
-    if(this.bNTFYME){
-        utils.ntfyMe('BTC-M15', `TrendChanged: ${oCandle.timestamp}`)
-    }
     console.log(`TrendChanged: ${oCandle.timestamp}`)
 
     cTrend.setTrendDirection(iCandleDirection)
@@ -109,16 +106,15 @@ function handleTrendChange(cTrend, oCandle, iCandleDirection, index){
         cTrend.setTrendThreshold(oCandle.high)
     }  
 
-    
+    if(this.bNTFYME){
+        utils.ntfyMe('BTC-M15', `TrendChanged: ${oCandle.timestamp}, new direction ${cTrend.iDirection}`)
+    }
     console.log(`new Trenddirection: ${cTrend.iDirection}`)
     console.log('')
 
 }
 
 function handleTrendThresholdLiquidation(cTrend, cPrevTrend, oCandle, iCandleDirection, index){
-    if(this.bNTFYME){
-        utils.ntfyMe('BTC-M15', `continue with prev trend => RangeHighLowLiquidation occured ${oCandle.timestamp}`)
-    }
     console.log(`continue with prev trend => RangeHighLowLiquidation occured ${oCandle.timestamp}`)
     
     cTrend.setLiqTimestamp(oCandle.timestamp) //mark trend as liquidated
@@ -144,6 +140,10 @@ function handleTrendThresholdLiquidation(cTrend, cPrevTrend, oCandle, iCandleDir
     }
 
     cTrend.bTrendRangeMoved = false
+    
+    if(this.bNTFYME){
+        utils.ntfyMe('BTC-M15', `continue with prev trend => RangeHighLowLiquidation occured ${oCandle.timestamp}, trenddirection: ${cTrend.iDirection}`)
+    }
     return {cTrend: cTrend, cPrevTrend: cPrevTrend}
 }
 
