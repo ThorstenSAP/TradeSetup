@@ -398,7 +398,7 @@ function handleTicker(sTicker, sTimeFrame){
 const runnerM15 = cron.schedule('0,15,30,45 * * * *', async () => { 
 	console.log(`crone running BTC-M15 script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
 	
-	await utils.ntfyMe('Log', `crone running BTC-M15 script`)
+	// await utils.ntfyMe('Log', `crone running BTC-M15 script`)
 	for await (const sTicker of aTicker) {
 		await handleTicker(sTicker, '15m')
 	}
