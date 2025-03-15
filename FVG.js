@@ -30,7 +30,7 @@ function handleTicker(sTicker, sTimeFrame){
 					if(aData[aData.length - 4].low > aData[aData.length - 2].high){
 						//FVG
 						console.log(`Bear FVG ${aData[aData.length - 3].timestamp}`)
-						await utils.ntfyMe(`FVG-${sTimeFrame}`, `Bear FVG ${aData[aData.length - 3].timestamp}`
+						await utils.ntfyMe(`FVG-${sTimeFrame}`, `Bear FVG ${aData[aData.length - 3].timestamp}`)
 					}
 				}
 			}
