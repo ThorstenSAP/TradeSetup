@@ -153,6 +153,7 @@ class Utils{
         if(!this.isStrongPush(oCandle)){
             return false
         } else {
+            //TODO use closing prices
             let i = 1
             while (this.isCandleInsidePrevCandleRange(oCandle, aData[index - i])){
                 i++

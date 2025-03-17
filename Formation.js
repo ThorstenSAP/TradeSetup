@@ -13,27 +13,30 @@ function handleTicker(sTicker, sTimeFrame){
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '10')
 		.then(async (aData) => {
             //check prev candles for a formation
-            
 			// aData[aData.length - 1] //crnt candle
 			// aData[aData.length - 2] //last of formation candle
 			// aData[aData.length - 3] //potential formation candle
 			// aData[aData.length - 4] //potential formation candle
 						
 			if(utils.isMCCandle(aData[aData.length - 1], aData[aData.length - 2])){
+				utils.ntfyMe(`BTC-${sTimeFrame}`, `MC Candle ${aData[i+1].timestamp}`)
 				console.log(`MC Candle ${aData[i+1].timestamp}`)
 			}
 
 			for (let i = aData.length -3; i >= 0 ; i--) {
                 
 				if(utils.isInsideOutFormation(aData[i+2], aData[i+1], aData[i])){
+					utils.ntfyMe(`BTC-${sTimeFrame}`, `InsideOut ${aData[i+1].timestamp}`)
                     console.log(`InsideOut ${aData[i].timestamp}`)
                 }
 				if(utils.isWyckoff(aData[i], i, aData)){
 					//TODO check when available
+					utils.ntfyMe(`BTC-${sTimeFrame}`, `Wyckoff ${aData[i+1].timestamp}`)
 					console.log(`Wyckoff ${aData[i].timestamp}`)
 				}
 				if(utils.isEveMorningStar(aData)){
 					//already implemented without retest
+					utils.ntfyMe(`BTC-${sTimeFrame}`, `EveMorningStar ${aData[i+1].timestamp}`)
                     console.log(`EveMorningStar ${aData[i].timestamp}`)
                 }
 				//TODO U-V Formation (4Candles)
