@@ -22,6 +22,12 @@ function handleTicker(sTicker, sTimeFrame){
 				utils.ntfyMe(`BTC-${sTimeFrame}`, `MC Candle ${aData[i+1].timestamp}`)
 				console.log(`MC Candle ${aData[i+1].timestamp}`)
 			}
+			//probably needs a given level to watch for -> otherwise there will be too many alerts
+			if(utils.isLiquidation(aData[aData.length - 1], aData[aData.length - 2], aData[aData.length - 3])){
+				utils.ntfyMe(`BTC-${sTimeFrame}`, `Liquidation ${aData[i+1].timestamp}`)
+				console.log(`Liquidation ${aData[i+1].timestamp}`)
+			}
+
 
 			for (let i = aData.length -3; i >= 0 ; i--) {
                 

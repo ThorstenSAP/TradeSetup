@@ -182,6 +182,23 @@ class Utils{
             }
         }
     }
+    isLiquidation(oCandle, oPrevCandle, oPrevPrevCandle){
+        if(this.getDirectionOfCandle(oCandle) == 0){
+            //bull candle, therfore downtrend before
+            if(oCandle.close > oPrevPrevCandle.close && oPrevCandle.close < oPrevPrevCandle.low){
+                return true
+            } else {
+                return false
+            }
+        } else {
+            if(oCandle.close < oPrevPrevCandle.close && oPrevCandle.close > oPrevPrevCandle.high){
+                return true
+            } else {
+                return false
+            }
+
+        }
+    }
     isUFormation(oCandle, index, aData){
         //strong push
         //a few dojis / weak candles
