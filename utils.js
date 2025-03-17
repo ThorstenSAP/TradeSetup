@@ -148,6 +148,48 @@ class Utils{
                 return false
             }
     }
+    isWyckoff(oCandle, index, aData){
+        //at least 3 candles taken out
+        if(!this.isStrongPush(oCandle)){
+            return false
+        } else {
+            let i = 1
+            while (this.isCandleInsidePrevCandleRange(oCandle, aData[index - i])){
+                i++
+            }
+            if(i >= 4){
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+    isMCCandle(oCandle, oPrevCandle){
+        
+        if(this.getDirectionOfCandle(oCandle) == 0){
+            if(oCandle.low < oPrevCandle.low && oCandle.close > oPrevCandle.high){
+                return true
+            } else {
+                return false
+            }
+        } else {
+            //bear MC
+            if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.low){
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+    isUFormation(oCandle, index, aData){
+        //strong push
+        //a few dojis / weak candles
+        //strong push
+        
+        if(this.isStrongPush(oCandle)){
+
+        }
+    }
     isCandleInsidePrevCandleRange(oCandle, oPrevCandle){
         //returns true for yes (isInside), false for no (isOutside)
         //close outside
@@ -166,6 +208,29 @@ class Utils{
                 return true //did close within the low of the prev candle
             }
 
+        }
+    }
+    isEveMorningStar(aCandles){npm
+        //provides latest candle. Hence, look back further one
+        const oLastCandle = aCandles[aCandles.length - 2] //prev candel
+        const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
+        const oPrevPrevCandle = aCandles[aCandles.length - 4] //three candle back
+        if(this.isBodyCandle(oLastCandle)){
+            if(this.getDirectionOfCandle(oLastCandle) === 0){
+                //bullish candle
+                if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 1)){
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                //bearish case
+                if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 0)){
+                    return true
+                } else {
+                    return false
+                }
+            }
         }
     }
     isStrongPush(oCandle){
@@ -226,29 +291,7 @@ class Utils{
         }
     }
 
-    isEveMorningStar(aCandles){
-        //provides latest candle. Hence, look back further one
-        const oLastCandle = aCandles[aCandles.length - 2] //prev candel
-        const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
-        const oPrevPrevCandle = aCandles[aCandles.length - 4] //three candle back
-        if(this.isBodyCandle(oLastCandle)){
-            if(this.getDirectionOfCandle(oLastCandle) === 0){
-                //bullish candle
-                if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 1)){
-                    return true
-                } else {
-                    return false
-                }
-            } else {
-                //bearish case
-                if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 0)){
-                    return true
-                } else {
-                    return false
-                }
-            }
-        }
-    }
+
 
     isEngulfing(aCandles){
         const oLastCandle = aCandles[aCandles.length - 2] //prev candel
