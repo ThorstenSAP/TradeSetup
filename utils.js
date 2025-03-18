@@ -144,8 +144,10 @@ class Utils{
         if(this.isBodyCandle(oPrevPrevCandle)){
             return false
         } else {
-            if(!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) && 
-            this.isCandleInsidePrevCandleRange(oPrevCandle, oPrevPrevCandle)){
+            if(!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) &&
+                !this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) && 
+                this.isCandleInsidePrevCandleRange(oPrevCandle, oPrevPrevCandle))
+            {
                 return true
             } else {
                 return false
