@@ -29,21 +29,20 @@ function handleTicker(sTicker, sTimeFrame){
 			}
 
 
-			for (let i = aData.length -3; i >= 4 ; i--) {
+			for (let i = aData.length -3; i >= 1 ; i--) {
                 
-				if(utils.isInsideOutFormation(aData[i+2], aData[i+1], aData[i])){
+				if(utils.isInsideOutFormation(aData[i+1], aData[i], aData[i-1])){
 					utils.ntfyMe(`BTC-${sTimeFrame}`, `InsideOut ${aData[i+1].timestamp}`)
-                    console.log(`InsideOut ${aData[i].timestamp}`)
+                    console.log(`InsideOut ${aData[i+1].timestamp}`)
                 }
 				if(utils.isWyckoff(aData[i], i, aData)){
-					//TODO check when available
 					utils.ntfyMe(`BTC-${sTimeFrame}`, `Wyckoff ${aData[i+1].timestamp}`)
 					console.log(`Wyckoff ${aData[i].timestamp}`)
 				}
 				if(utils.isEveMorningStar(aData)){
-					//already implemented without retest
+					//TODO retest
 					utils.ntfyMe(`BTC-${sTimeFrame}`, `EveMorningStar ${aData[i+1].timestamp}`)
-                    console.log(`EveMorningStar ${aData[i].timestamp}`)
+                    console.log(`EveMorningStar ${aData[i+1].timestamp}`)
                 }
 				//TODO U-V Formation (4Candles)
 				// if(utils.isUFormation(aData[i], i, aData)){
@@ -109,27 +108,29 @@ runnerH4.start()
 
 // function testFormation(sTicker, sTimeFrame){
 // 	return new Promise((resolve, reject) => {
-// 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '10')
+// 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '26')
 // 		.then(async (aData) => {
 			
 // 			if(utils.isMCCandle(aData[aData.length - 2], aData[aData.length - 3])){
-// 				console.log(`MC Candle ${aData[i+1].timestamp}`)
+// 				console.log(`MC Candle ${aData[aData.length - 2].timestamp}`)
 // 			}
 // 			//probably needs a given level to watch for -> otherwise there will be too many alerts
 // 			if(utils.isLiquidation(aData[aData.length - 2], aData[aData.length - 3], aData[aData.length - 4])){
-// 				console.log(`Liquidation ${aData[i+1].timestamp}`)
+// 				console.log(`Liquidation ${aData[aData.length - 2].timestamp}`)
 // 			}
 
-// 			for (let i = aData.length -3; i >= 4 ; i--) {
-                
-// 				if(utils.isInsideOutFormation(aData[i+2], aData[i+1], aData[i])){
-//                     console.log(`InsideOut ${aData[i].timestamp}`)
+// 			for (let i = aData.length -3; i >= 1 ; i--) {
+// 				// if(i == 8){
+// 				// 	debugger
+// 				// }
+// 				if(utils.isInsideOutFormation(aData[i+1], aData[i], aData[i-1])){
+//                     console.log(`InsideOut ${aData[i+1].timestamp}`)
 //                 }
 // 				if(utils.isWyckoff(aData[i], i, aData)){
-// 					//TODO check when available
 // 					console.log(`Wyckoff ${aData[i].timestamp}`)
 // 				}
 // 				if(utils.isEveMorningStar(aData)){
+// 					//TODO Test again
 // 					//already implemented without retest
 //                     console.log(`EveMorningStar ${aData[i].timestamp}`)
 //                 }
@@ -151,6 +152,6 @@ runnerH4.start()
 
 
 // async function main () {
-//     await testFormation('BTC', '30m')
+//     await testFormation('BTC', '15m')
 // }
 // main()

@@ -156,15 +156,14 @@ class Utils{
     }
     isWyckoff(oCandle, index, aData){
         //at least 3 candles taken out
-        if(!this.isStrongPush(oCandle)){
+        if(!this.isBodyCandle(oCandle)){
             return false
         } else {
-            //TODO use closing prices
             let i = 1
-            while (this.isCandleInsidePrevCandleRange(oCandle, aData[index - i])){
+            while (this.isEngulfing(oCandle, aData[index - i])){
                 i++
             }
-            if(i >= 4){
+            if(i >= 4){ //at least 3 candles engulfed
                 return true
             } else {
                 return false
@@ -316,25 +315,52 @@ class Utils{
     }
 
 
-
-    isEngulfing(aCandles){
-        const oLastCandle = aCandles[aCandles.length - 2] //prev candel
-        const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
-        if(!this.isBodyCandle(oLastCandle)){
-            return false
-        } else {
-            if(this.getDirectionOfCandle(oPrevCandle) === 0){
-                //prev candle was bullish. Hence, look for bearish engulfing
-                if(oLastCandle.open >= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){
-                    return true //bearish engulfing
-                }
+    isEngulfing(oCandle, oPrevCandle){
+            if(!this.isBodyCandle(oCandle)){
+                return false
             } else {
-                if(oLastCandle.open <= oPrevCandle.close && oLastCandle.close > oPrevCandle.open){
-                    return true //bullish engulfing
+                if(this.getDirectionOfCandle(oPrevCandle) === 0 && this.getDirectionOfCandle(oCandle) === 0){
+                    //prev candle was bullish. Hence, look for bearish engulfing
+                    if(oCandle.open <= oPrevCandle.open && oCandle.close >= oPrevCandle.close){
+                        return true //bearish engulfing
+                    }
+                } else if(this.getDirectionOfCandle(oPrevCandle) == 1 && this.getDirectionOfCandle(oCandle) == 1){
+                    if(oCandle.open >= oPrevCandle.open && oCandle.close <= oPrevCandle.close){
+                        return true //bullish engulfing
+                    }
+                } else if(this.getDirectionOfCandle(oPrevCandle) == 1 && this.getDirectionOfCandle(oCandle) == 0){
+                    //bull engulfing of bear candle
+                    if(oPrevCandle.open >= oCandle.close && oCandle.open <= oPrevCandle.open){
+                        return true //bullish engulfing
+                    }
+                } else if(this.getDirectionOfCandle(oPrevCandle) == 0 && this.getDirectionOfCandle(oCandle) == 1){
+                    //bear engulfing of bull candle
+                    if(oCandle.open >= oPrevCandle.close && oCandle.close <= oPrevCandle.open){
+                        return true //bullish engulfing
+                    }
                 }
             }
-        }
+            return false
+
     }
+    // isEngulfing(aCandles){
+    //     const oLastCandle = aCandles[aCandles.length - 2] //prev candel
+    //     const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
+    //     if(!this.isBodyCandle(oLastCandle)){
+    //         return false
+    //     } else {
+    //         if(this.getDirectionOfCandle(oPrevCandle) === 0){
+    //             //prev candle was bullish. Hence, look for bearish engulfing
+    //             if(oLastCandle.open >= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){
+    //                 return true //bearish engulfing
+    //             }
+    //         } else {
+    //             if(oLastCandle.open <= oPrevCandle.close && oLastCandle.close > oPrevCandle.open){
+    //                 return true //bullish engulfing
+    //             }
+    //         }
+    //     }
+    // }
 
     isCloudCover(aCandles){
         const oLastCandle = aCandles[aCandles.length - 2] //prev candel
