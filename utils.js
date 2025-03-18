@@ -141,12 +141,16 @@ class Utils{
         return -1
     }
     isInsideOutFormation(oCandle, oPrevCandle, oPrevPrevCandle){
-        if(!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) && 
+        if(this.isStrongPush(oPrevPrevCandle)){
+            return false
+        } else {
+            if(!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) && 
             this.isCandleInsidePrevCandleRange(oPrevCandle, oPrevPrevCandle)){
                 return true
             } else {
                 return false
             }
+        }
     }
     isWyckoff(oCandle, index, aData){
         //at least 3 candles taken out
