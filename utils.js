@@ -141,12 +141,12 @@ class Utils{
         return -1
     }
     isInsideOutFormation(oCandle, oPrevCandle, oPrevPrevCandle){
-        if(this.isBodyCandle(oPrevPrevCandle) && this.isBodyCandle(oCandle)){
+        if(!this.isBodyCandle(oPrevPrevCandle) || !this.isBodyCandle(oCandle)){
             return false
         } else {
-            if(this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) &&
-                this.isCandleInsidePrevCandleRange(oCandle, oPrevPrevCandle) && 
-                !this.isCandleInsidePrevCandleRange(oPrevCandle, oPrevPrevCandle))
+            if(!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) &&
+                !this.isCandleInsidePrevCandleRange(oCandle, oPrevPrevCandle) && 
+                this.isCandleInsidePrevCandleRange(oPrevCandle, oPrevPrevCandle))
             {
                 return true
             } else {
