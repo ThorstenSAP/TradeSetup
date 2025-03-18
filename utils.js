@@ -141,7 +141,7 @@ class Utils{
         return -1
     }
     isInsideOutFormation(oCandle, oPrevCandle, oPrevPrevCandle){
-        if(this.isStrongPush(oPrevPrevCandle)){
+        if(this.isBodyCandle(oPrevPrevCandle)){
             return false
         } else {
             if(!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) && 
