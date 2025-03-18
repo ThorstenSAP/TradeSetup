@@ -74,7 +74,7 @@ const runnerM30 = cron.schedule('0,30 * * * *', async () => {
 		await handleTicker(sTicker, '30m')
 	}
 })
-const runnerH1 = cron.schedule('* */1 * * *', async () => { 
+const runnerH1 = cron.schedule('1 */1 * * *', async () => { 
 	
 	await utils.ntfyMe('Log', `crone running BTC-H1 formationscript`)
 	for await (const sTicker of aTicker) {
