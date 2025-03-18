@@ -141,7 +141,7 @@ class Utils{
         return -1
     }
     isInsideOutFormation(oCandle, oPrevCandle, oPrevPrevCandle){
-        if(this.isBodyCandle(oPrevPrevCandle)){
+        if(this.isBodyCandle(oPrevPrevCandle) && this.isBodyCandle(oCandle)){
             return false
         } else {
             if(this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) &&
