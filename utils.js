@@ -234,7 +234,7 @@ class Utils{
 
         }
     }
-    isEveMorningStar(aCandles){npm
+    isEveMorningStar(aCandles){
         //provides latest candle. Hence, look back further one
         const oLastCandle = aCandles[aCandles.length - 2] //prev candel
         const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
