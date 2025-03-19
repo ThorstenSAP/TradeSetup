@@ -160,7 +160,7 @@ class Utils{
             return false
         } else {
             let i = 1
-            while (this.isEngulfing(oCandle, aData[index - i])){
+            while (this.isEngulfing(oCandle, aData[index - i] && index - i >= 0 )){
                 i++
             }
             if(i >= 4){ //at least 3 candles engulfed
@@ -233,13 +233,11 @@ class Utils{
 
         }
     }
-    isEveMorningStar(aCandles){
-        //provides latest candle. Hence, look back further one
-        const oLastCandle = aCandles[aCandles.length - 2] //prev candel
-        const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
-        const oPrevPrevCandle = aCandles[aCandles.length - 4] //three candle back
-        if(this.isBodyCandle(oLastCandle)){
-            if(this.getDirectionOfCandle(oLastCandle) === 0){
+    isEveMorningStar(oCandle, oPrevCandle, oPrevPrevCandle){
+        if(!this.isBodyCandle(oCandle) || !this.isBodyCandle(oPrevPrevCandle)){
+            return false
+        } else {
+            if(this.getDirectionOfCandle(oCandle) === 0){
                 //bullish candle
                 if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 1)){
                     return true
