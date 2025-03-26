@@ -44,7 +44,7 @@ function handleTicker(sTicker, sTimeFrame){
 }
 
 
-const aTicker = ['BTC']
+const aTicker = ['BTC', 'ETH', 'SOL']
 const runnerH1 = cron.schedule('1 * * * *', async () => { 
 	// console.log(`crone running BTC-M15 script -- ${new Date().toDateString()}:${new Date().toTimeString()}`)
 	// 
