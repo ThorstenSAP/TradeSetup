@@ -384,6 +384,28 @@ class Utils{
         }
         
     }
+    didCandleTouchFVG(oFVG, oCandle){
+        if(oFVG.iDirection == 0){
+            if(oCandle.close > oFVG.fRangeLow && 
+                (oCandle.close < oFVG.fRangeHigh || oCandle.open < oFVG.fRangeHigh))                   
+            { 
+                return true
+            }
+        } else {
+            //bearish candle
+            
+            if(oCandle.close < oFVG.fRangeHigh && 
+                (oCandle.close < oFVG.fRangeHigh || oCandle.open < oFVG.fRangeHigh))                   
+            { 
+                return true
+            }
+        }
+        //if code comes here return false
+        console.log('candle did not touch FVG')
+        return false
+
+
+    }
 
     convertApiResponseForRsiCalc(aData){
         const aPrevClose = []
