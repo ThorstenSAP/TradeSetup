@@ -36,22 +36,25 @@ function handleTicker(sTicker, sTimeFrame){
                 if(utils.didCandleTouchFVG(oFVG, oPrevCandle)){
 
                     if(utils.isMCCandle(oPrevCandle, oPrevPrevCandle)){
-                        utils.ntfyMe(`BTC-${sTimeFrame}`, `MC Candle ${oPrevCandle.timestamp}`)
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oPrevCandle.timestamp}`)
                         console.log(`MC Candle ${oPrevCandle.timestamp}`)
                     }
                     //probably needs a given level to watch for -> otherwise there will be too many alerts
                     if(utils.isLiquidation(oPrevCandle, oPrevPrevCandle, oPrevPrevPrevCandle)){
-                        utils.ntfyMe(`BTC-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
                         console.log(`Liquidation ${oPrevCandle.timestamp}`)
                     }
                     if(utils.isInsideOutFormation(oPrevCandle, oPrevPrevCandle, oPrevPrevPrevCandle)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
                         console.log(`InsideOut ${oPrevCandle.timestamp}`)
                     }
                     if(utils.isWyckoff(oPrevCandle, 2, aData)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
                         console.log(`Wyckoff ${oPrevCandle.timestamp}`)
                     }
                     if(utils.isEveMorningStar(oPrevCandle, oPrevPrevCandle, oPrevPrevPrevCandle)){
                         //already implemented without retest
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
                         console.log(`EveMorningStar ${oPrevCandle.timestamp}`)
                     }
                 }
