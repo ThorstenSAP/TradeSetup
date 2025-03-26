@@ -387,7 +387,7 @@ class Utils{
     didCandleTouchFVG(oFVG, oCandle){
         if(oFVG.iDirection == 0){
             if(oCandle.close > oFVG.fRangeLow && 
-                (oCandle.close < oFVG.fRangeHigh || oCandle.open < oFVG.fRangeHigh))                   
+                (oCandle.close < oFVG.fRangeHigh || oCandle.open < oFVG.fRangeHigh || oCandle.high < oFVG.fRangeHigh))                   
             { 
                 return true
             }
@@ -395,7 +395,7 @@ class Utils{
             //bearish candle
             
             if(oCandle.close < oFVG.fRangeHigh && 
-                (oCandle.close < oFVG.fRangeHigh || oCandle.open < oFVG.fRangeHigh))                   
+                (oCandle.close > oFVG.fRangeLow || oCandle.open > oFVG.fRangeLow || oCandle.high > oFVG.fRangeLow))                   
             { 
                 return true
             }
