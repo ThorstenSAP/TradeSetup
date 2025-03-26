@@ -22,13 +22,13 @@ function handleTicker(sTicker, sTimeFrame){
                 if(oCrntCandle.close < iStopLvl){
                     utils.ntfyMe(`BTC-StopLvl`, `stop per M1 close taken ${oCrntCandle.timestamp}`)
                     //TODO sent order to bitget -> market close
-                    resolve()
+                    // resolve() //keep running forever will start process again
                 }
             } else {
                 if(oCrntCandle.close > iStopLvl){
                     utils.ntfyMe(`BTC-StopLvl`, `stop per M1 close taken ${oCrntCandle.timestamp}`)
                     //TODO sent order to bitget -> market close
-                    resolve()
+                    // resolve() //keep running forever will start process again
                 }
             }
 
