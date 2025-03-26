@@ -7,7 +7,7 @@ const utils = new Utils()
 const bitget = new BitgetApi()
 
 const iStopLvl = 86630
-const iDirection = 0
+const iDirection = 1
 
 
 const aTicker = ['BTC']
@@ -20,13 +20,15 @@ function handleTicker(sTicker, sTimeFrame){
             
             if(iDirection == 0){
                 if(oCrntCandle.close < iStopLvl){
-                    utils.ntfyMe(`BTC-StopLvl}`, `stop per M1 close taken ${oCrntCandle.timestamp}`)
+                    utils.ntfyMe(`BTC-StopLvl`, `stop per M1 close taken ${oCrntCandle.timestamp}`)
                     //TODO sent order to bitget -> market close
+                    resolve()
                 }
             } else {
                 if(oCrntCandle.close > iStopLvl){
-                    utils.ntfyMe(`BTC-StopLvl}`, `stop per M1 close taken ${oCrntCandle.timestamp}`)
+                    utils.ntfyMe(`BTC-StopLvl`, `stop per M1 close taken ${oCrntCandle.timestamp}`)
                     //TODO sent order to bitget -> market close
+                    resolve()
                 }
             }
 
@@ -43,7 +45,8 @@ const runner = cron.schedule('59 */1 * * * *', async () => {
 	
 	await utils.ntfyMe('Log', `crone running stopCloseLevel M1`)
 	for await (const sTicker of aTicker) {
-		await handleTicker(sTicker, '1m')
+		await handleTicker(sTicker, '1m').then(() => runner.stop())
 	}
 })
 runner.start()
+// handleTicker('BTC', '1m')
