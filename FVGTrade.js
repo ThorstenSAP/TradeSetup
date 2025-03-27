@@ -31,6 +31,10 @@ function handleTicker(sTicker, sTimeFrame){
 			const oPrevPrevCandle = aData[aData.length - 3] //potential formation candle
 			const oPrevPrevPrevCandle =  aData[aData.length - 4] //potential formation candle
 
+            console.log(`timeframe: ${sTimeFrame}`)
+            console.log('timestamp: ' + new Date().toLocaleTimeString())
+            console.log(`candle: ${oCrntCandle.timestamp}`)
+
             //TODO check if an trade is active
             if(utils.getDirectionOfCandle(oCrntCandle) == oFVG.iDirection){
                 if(utils.didCandleTouchFVG(oFVG, oCrntCandle)){
