@@ -32,30 +32,30 @@ function handleTicker(sTicker, sTimeFrame){
 			const oPrevPrevPrevCandle =  aData[aData.length - 4] //potential formation candle
 
             //TODO check if an trade is active
-            if(utils.getDirectionOfCandle(oPrevCandle) == oFVG.iDirection){
-                if(utils.didCandleTouchFVG(oFVG, oPrevCandle)){
+            if(utils.getDirectionOfCandle(oCrntCandle) == oFVG.iDirection){
+                if(utils.didCandleTouchFVG(oFVG, oCrntCandle)){
 
-                    if(utils.isMCCandle(oPrevCandle, oPrevPrevCandle)){
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oPrevCandle.timestamp}`)
-                        console.log(`MC Candle ${oPrevCandle.timestamp}`)
+                    if(utils.isMCCandle(oCrntCandle, oPrevCandle)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oCrntCandle.timestamp}`)
+                        console.log(`MC Candle ${oCrntCandle.timestamp}`)
                     }
                     //probably needs a given level to watch for -> otherwise there will be too many alerts
-                    if(utils.isLiquidation(oPrevCandle, oPrevPrevCandle, oPrevPrevPrevCandle)){
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
-                        console.log(`Liquidation ${oPrevCandle.timestamp}`)
+                    if(utils.isLiquidation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
+                        console.log(`Liquidation ${oCrntCandle.timestamp}`)
                     }
-                    if(utils.isInsideOutFormation(oPrevCandle, oPrevPrevCandle, oPrevPrevPrevCandle)){
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
-                        console.log(`InsideOut ${oPrevCandle.timestamp}`)
+                    if(utils.isInsideOutFormation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
+                        console.log(`InsideOut ${oCrntCandle.timestamp}`)
                     }
-                    if(utils.isWyckoff(oPrevCandle, 2, aData)){
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
-                        console.log(`Wyckoff ${oPrevCandle.timestamp}`)
+                    if(utils.isWyckoff(oCrntCandle, 2, aData)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
+                        console.log(`Wyckoff ${oCrntCandle.timestamp}`)
                     }
-                    if(utils.isEveMorningStar(oPrevCandle, oPrevPrevCandle, oPrevPrevPrevCandle)){
+                    if(utils.isEveMorningStar(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
                         //already implemented without retest
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
-                        console.log(`EveMorningStar ${oPrevCandle.timestamp}`)
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
+                        console.log(`EveMorningStar ${oCrntCandle.timestamp}`)
                     }
                 }
             }
