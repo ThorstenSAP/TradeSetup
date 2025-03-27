@@ -44,10 +44,10 @@ function handleTicker(sTicker, sTimeFrame){
                         console.log(`MC Candle ${oCrntCandle.timestamp}`)
                     }
                     //probably needs a given level to watch for -> otherwise there will be too many alerts
-                    if(utils.isLiquidation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-                        console.log(`Liquidation ${oCrntCandle.timestamp}`)
-                    }
+                    // if(utils.isLiquidation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+                    //     utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
+                    //     console.log(`Liquidation ${oCrntCandle.timestamp}`)
+                    // }
                     if(utils.isInsideOutFormation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
                         utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
                         console.log(`InsideOut ${oCrntCandle.timestamp}`)
