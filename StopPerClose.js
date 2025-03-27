@@ -6,8 +6,8 @@ const { Utils } = require('./utils.js')
 const utils = new Utils()
 const bitget = new BitgetApi()
 
-const iStopLvl = 86630
-const iDirection = 1
+const iStopLvl = 87756
+const iDirection = 0
 
 
 const aTicker = ['BTC']
