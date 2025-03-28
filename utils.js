@@ -239,14 +239,16 @@ class Utils{
         } else {
             if(this.getDirectionOfCandle(oCandle) === 0){
                 //bullish candle
-                if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 1)){
+                //when the candles is not a body candle (body >= 0.5% of range) it is ok for EveMorningStar
+                if(!this.isBodyCandle(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 1)){
                     return true
                 } else {
                     return false
                 }
             } else {
                 //bearish case
-                if(this.isCandleDoji(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 0)){
+                //when the candles is not a body candle (body >= 0.5% of range) it is ok for EveMorningStar
+                if(!this.isBodyCandle(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 0)){
                     return true
                 } else {
                     return false
