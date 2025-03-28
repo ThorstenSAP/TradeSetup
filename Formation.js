@@ -13,10 +13,53 @@ function handleTicker(sTicker, sTimeFrame){
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '10')
 		.then(async (aData) => {
             //check prev candles for a formation
-			const oCrntCandle =  aData[aData.length - 1] //crnt candle
-			const oPrevCandle = aData[aData.length - 2] //last of formation candle
-			const oPrevPrevCandle = aData[aData.length - 3] //potential formation candle
-			const oPrevPrevPrevCandle =  aData[aData.length - 4] //potential formation candle
+
+			
+            //check prev candles for a formation
+			let oCrntCandle
+			let oPrevCandle 
+			let oPrevPrevCandle 
+			let oPrevPrevPrevCandle
+
+
+			if(sTimeFrame == '15m' || sTimeFrame == '30m'){
+				//check prev candles for a formation
+				oCrntCandle =  aData[aData.length - 1] //crnt candle
+				oPrevCandle = aData[aData.length - 2] //last of formation candle
+				oPrevPrevCandle = aData[aData.length - 3] //potential formation candle
+
+				
+				if(utils.isMCCandle(oCrntCandle, oPrevCandle)){
+					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `MC Candle ${oPrevCandle.timestamp}`)
+					console.log(`MC Candle ${oCrntCandle.timestamp}`)
+				}
+				//probably needs a given level to watch for -> otherwise there will be too many alerts
+				// if(utils.isLiquidation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+			// 	utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
+				//     console.log(`Liquidation ${oCrntCandle.timestamp}`)
+				// }
+				if(utils.isInsideOutFormation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `InsideOut ${oPrevCandle.timestamp}`)
+					console.log(`InsideOut ${oCrntCandle.timestamp}`)
+				}
+				if(utils.isWyckoff(oCrntCandle, 2, aData)){
+					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `Wyckoff ${oCrntCandle.timestamp}`)
+					console.log(`Wyckoff ${oCrntCandle.timestamp}`)
+				}
+				if(utils.isEveMorningStar(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+					//already implemented without retest
+					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `EveMorningStar ${oCrntCandle.timestamp}`)
+					console.log(`EveMorningStar ${oCrntCandle.timestamp}`)
+				}
+
+
+
+			} else {
+				oCrntCandle =  aData[aData.length - 1] //crnt candle
+				oPrevCandle = aData[aData.length - 2] //last of formation candle
+				oPrevPrevCandle = aData[aData.length - 3] //potential formation candle
+				oPrevPrevPrevCandle =  aData[aData.length - 4] //potential formation candle
+			}
 						
 			if(utils.isMCCandle(oPrevCandle, oPrevPrevCandle)){
 				utils.ntfyMe(`BTC-${sTimeFrame}`, `MC Candle ${oPrevCandle.timestamp}`)
@@ -28,13 +71,15 @@ function handleTicker(sTicker, sTimeFrame){
 			// 	console.log(`Liquidation ${oPrevCandle.timestamp}`)
 			// }
 			if(utils.isInsideOutFormation(oPrevCandle, oPrevPrevCandle, oPrevPrevPrevCandle)){
+				utils.ntfyMe(`BTC-${sTimeFrame}`, `InsideOut ${oPrevCandle.timestamp}`)
 				console.log(`InsideOut ${oPrevCandle.timestamp}`)
 			}
 			if(utils.isWyckoff(oPrevCandle, 2, aData)){
+				utils.ntfyMe(`BTC-${sTimeFrame}`, `Wyckoff ${oCrntCandle.timestamp}`)
 				console.log(`Wyckoff ${oPrevCandle.timestamp}`)
 			}
 			if(utils.isEveMorningStar(oPrevCandle, oPrevPrevCandle, oPrevPrevPrevCandle)){
-				//already implemented without retest
+				utils.ntfyMe(`BTC-${sTimeFrame}`, `EveMorningStar ${oCrntCandle.timestamp}`)
 				console.log(`EveMorningStar ${oPrevCandle.timestamp}`)
 			}
 
@@ -69,14 +114,14 @@ function handleTicker(sTicker, sTimeFrame){
 	})
 }
 
-const runnerM15 = cron.schedule('*/15 * * * *', async () => { 
+const runnerM15 = cron.schedule('59 */15 * * * *', async () => { 
 	
 	await utils.ntfyMe('Log', `crone running BTC-M15 formationscript`)
 	for await (const sTicker of aTicker) {
 		await handleTicker(sTicker, '15m')
 	}
 })
-const runnerM30 = cron.schedule('0,30 * * * *', async () => { 
+const runnerM30 = cron.schedule('59 0,30 * * * *', async () => { 
 	
 	await utils.ntfyMe('Log', `crone running BTC-M30 formationscript`)
 	for await (const sTicker of aTicker) {
