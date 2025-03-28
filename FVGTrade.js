@@ -25,39 +25,39 @@ function handleTicker(sTicker, sTimeFrame){
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '10')
 		.then(async (aData) => {
             //check prev candles for a formation
-			const oCrntCandle =  aData[aData.length - 1] //crnt candle
-			const oPrevCandle = aData[aData.length - 2] //last of formation candle
-			const oPrevPrevCandle = aData[aData.length - 3] //potential formation candle
+			const oLatestCandle =  aData[aData.length - 2] //crnt candle
+			const oPrevCandle = aData[aData.length - 3] //last of formation candle
+			const oPrevPrevCandle = aData[aData.length - 4] //potential formation candle
 
             console.log(`timeframe: ${sTimeFrame}`)
             console.log('timestamp: ' + new Date().toLocaleTimeString())
-            console.log(`candle: ${oCrntCandle.timestamp}`)
+            console.log(`candle: ${oLatestCandle.timestamp}`)
 
             //TODO check if an trade is active
-            if(utils.getDirectionOfCandle(oCrntCandle) == oFVG.iDirection){
-                if(utils.didCandleTouchFVG(oFVG, oCrntCandle)){
+            if(utils.getDirectionOfCandle(oLatestCandle) == oFVG.iDirection){
+                if(utils.didCandleTouchFVG(oFVG, oLatestCandle)){
 
-                    if(utils.isMCCandle(oCrntCandle, oPrevCandle)){
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oCrntCandle.timestamp}`)
-                        console.log(`MC Candle ${oCrntCandle.timestamp}`)
+                    if(utils.isMCCandle(oLatestCandle, oPrevCandle)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oLatestCandle.timestamp}`)
+                        console.log(`MC Candle ${oLatestCandle.timestamp}`)
                     }
                     //probably needs a given level to watch for -> otherwise there will be too many alerts
-                    // if(utils.isLiquidation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
-                    //     utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-                    //     console.log(`Liquidation ${oCrntCandle.timestamp}`)
+                    // if(utils.isLiquidation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
+                    //     utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oLatestCandle.timestamp}`)
+                    //     console.log(`Liquidation ${oLatestCandle.timestamp}`)
                     // }
-                    if(utils.isInsideOutFormation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-                        console.log(`InsideOut ${oCrntCandle.timestamp}`)
+                    if(utils.isInsideOutFormation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oLatestCandle.timestamp}`)
+                        console.log(`InsideOut ${oLatestCandle.timestamp}`)
                     }
-                    if(utils.isWyckoff(oCrntCandle, 2, aData)){
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-                        console.log(`Wyckoff ${oCrntCandle.timestamp}`)
+                    if(utils.isWyckoff(oLatestCandle, 2, aData)){
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oLatestCandle.timestamp}`)
+                        console.log(`Wyckoff ${oLatestCandle.timestamp}`)
                     }
-                    if(utils.isEveMorningStar(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+                    if(utils.isEveMorningStar(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
                         //already implemented without retest
-                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-                        console.log(`EveMorningStar ${oCrntCandle.timestamp}`)
+                        utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oLatestCandle.timestamp}`)
+                        console.log(`EveMorningStar ${oLatestCandle.timestamp}`)
                     }
                 }
             }
@@ -98,53 +98,53 @@ runnerM15.start()
 // 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '55')
 // 		.then(async (aData) => {
 //             //check prev candles for a formation
-// 			// const oCrntCandle =  aData[aData.length - 1] //crnt candle
+// 			// const oLatestCandle =  aData[aData.length - 1] //crnt candle
 // 			// const oPrevCandle = aData[aData.length - 2] //last of formation candle
 // 			// const oPrevPrevCandle = aData[aData.length - 3] //potential formation candle
 
 //             //TODO check if an trade is active
-//             // if(utils.getDirectionOfCandle(oCrntCandle) == oFVG.iDirection){
-//             //     if(utils.didCandleTouchFVG(oFVG, oCrntCandle)){
+//             // if(utils.getDirectionOfCandle(oLatestCandle) == oFVG.iDirection){
+//             //     if(utils.didCandleTouchFVG(oFVG, oLatestCandle)){
 
-//             //         if(utils.isMCCandle(oCrntCandle, oPrevCandle)){
-//             //             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oCrntCandle.timestamp}`)
-//             //             console.log(`MC Candle ${oCrntCandle.timestamp}`)
+//             //         if(utils.isMCCandle(oLatestCandle, oPrevCandle)){
+//             //             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oLatestCandle.timestamp}`)
+//             //             console.log(`MC Candle ${oLatestCandle.timestamp}`)
 //             //         }
 //             //         //probably needs a given level to watch for -> otherwise there will be too many alerts
-//             //         // if(utils.isLiquidation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
-//             //         //     utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-//             //         //     console.log(`Liquidation ${oCrntCandle.timestamp}`)
+//             //         // if(utils.isLiquidation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
+//             //         //     utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oLatestCandle.timestamp}`)
+//             //         //     console.log(`Liquidation ${oLatestCandle.timestamp}`)
 //             //         // }
-//             //         if(utils.isInsideOutFormation(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
-//             //             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-//             //             console.log(`InsideOut ${oCrntCandle.timestamp}`)
+//             //         if(utils.isInsideOutFormation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
+//             //             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oLatestCandle.timestamp}`)
+//             //             console.log(`InsideOut ${oLatestCandle.timestamp}`)
 //             //         }
-//             //         if(utils.isWyckoff(oCrntCandle, 2, aData)){
-//             //             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-//             //             console.log(`Wyckoff ${oCrntCandle.timestamp}`)
+//             //         if(utils.isWyckoff(oLatestCandle, 2, aData)){
+//             //             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oLatestCandle.timestamp}`)
+//             //             console.log(`Wyckoff ${oLatestCandle.timestamp}`)
 //             //         }
-//             //         if(utils.isEveMorningStar(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+//             //         if(utils.isEveMorningStar(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
 //             //             //already implemented without retest
-//             //             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oCrntCandle.timestamp}`)
-//             //             console.log(`EveMorningStar ${oCrntCandle.timestamp}`)
+//             //             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `Liquidation ${oLatestCandle.timestamp}`)
+//             //             console.log(`EveMorningStar ${oLatestCandle.timestamp}`)
 //             //         }
 //             //     }
 //             // }
 // 			for (let i = aData.length; i >= 3 ; i--) {
-//                 const oCrntCandle =  aData[i - 1] //crnt candle
+//                 const oLatestCandle =  aData[i - 1] //crnt candle
 //                 const oPrevCandle = aData[i - 2] //last of formation candle
 //                 const oPrevPrevCandle = aData[i - 3] //potential formation candle
 
 // 				// if(i == 14){
 // 				// 	debugger
 // 				// }
-//                 if(utils.getDirectionOfCandle(oCrntCandle) == oFVG.iDirection){
-//                     if(utils.didCandleTouchFVG(oFVG, oCrntCandle)){
-//                         if(utils.isMCCandle(oCrntCandle, oPrevCandle)){
-//                             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oCrntCandle.timestamp}`)
-//                             console.log(`MC Candle ${oCrntCandle.timestamp}`)
+//                 if(utils.getDirectionOfCandle(oLatestCandle) == oFVG.iDirection){
+//                     if(utils.didCandleTouchFVG(oFVG, oLatestCandle)){
+//                         if(utils.isMCCandle(oLatestCandle, oPrevCandle)){
+//                             // utils.ntfyMe(`BTC-FVG-${sTimeFrame}`, `MC Candle ${oLatestCandle.timestamp}`)
+//                             console.log(`MC Candle ${oLatestCandle.timestamp}`)
 //                         }
-//                         // if(utils.isEveMorningStar(oCrntCandle, oPrevCandle, oPrevPrevCandle)){
+//                         // if(utils.isEveMorningStar(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
 //                         //     //already implemented without retest
 //                         //     console.log(`EveMorningStar ${aData[i].timestamp}`)
 //                         // }
