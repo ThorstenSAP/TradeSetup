@@ -15,7 +15,7 @@ class FVG{
     }
 }
 
-const oFVG = new FVG(1, 86698.1, 85409.0) //28.03.25 05.00 H4
+const oFVG = new FVG(1, 86123.1, 84450.0) //28.03.25 05.00 H4
 
 
 
