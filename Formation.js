@@ -40,9 +40,13 @@ function handleTicker(sTicker, sTimeFrame){
 				console.log(`Wyckoff ${oLatestCandle.timestamp}`)
 			}
 			if(utils.isEveMorningStar(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
-				//already implemented without retest
-				utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `EveMorningStar ${oLatestCandle.timestamp}`)
-				console.log(`EveMorningStar ${oLatestCandle.timestamp}`)
+				if(utils.getDirectionOfCandle(aData[i]) == 0){
+					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `MorningStar ${oLatestCandle.timestamp}`)
+					console.log(`MorningStar ${oLatestCandle.timestamp}`)
+				} else {
+					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `EveStar ${oLatestCandle.timestamp}`)
+					console.log(`EveStar ${oLatestCandle.timestamp}`)
+				}
 			}
 
 
@@ -151,18 +155,29 @@ runnerH4.start()
 // 				console.log(`Wyckoff ${oLatestCandle.timestamp}`)
 // 			}
 // 			if(utils.isEveMorningStar(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
-// 				//already implemented without retest
-// 				utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `EveMorningStar ${oLatestCandle.timestamp}`)
-// 				console.log(`EveMorningStar ${oLatestCandle.timestamp}`)
+// 				if(utils.getDirectionOfCandle(aData[i]) == 0){
+// 					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `MorningStar ${oLatestCandle.timestamp}`)
+// 					console.log(`MorningStar ${oLatestCandle.timestamp}`)
+// 				} else {
+// 					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `EveStar ${oLatestCandle.timestamp}`)
+// 					console.log(`EveStar ${oLatestCandle.timestamp}`)
+// 				}
 // 			}
 
-// 			for (let i = aData.length -2; i >= 1 ; i--) {
+// 			for (let i = aData.length -2; i >= 2 ; i--) {
 // 				if(i == 20){
-// 					debugger
+// 					if(utils.isWyckoff(aData[i], i - 2, aData)){
+// 						// utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `Wyckoff ${oLatestCandle.timestamp}`)
+// 						console.log(`Wyckoff ${oLatestCandle.timestamp}`)
+// 					}
 // 				}
 // 				if(utils.isEveMorningStar(aData[i], aData[i-1], aData[i-2])){
 // 					//already implemented without retest
-//                     console.log(`EveMorningStar ${aData[i].timestamp}`)
+// 					if(utils.getDirectionOfCandle(aData[i]) == 0){
+// 						console.log(`MorningStar ${aData[i].timestamp}`)
+// 					} else {
+// 						console.log(`EveStar ${aData[i].timestamp}`)
+// 					}
 //                 }
 // 				//TODO U-V Formation (4Candles)
 // 				// if(utils.isUFormation(aData[i], i, aData)){
