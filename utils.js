@@ -160,7 +160,7 @@ class Utils{
             return false
         } else {
             let i = 1
-            while (this.isEngulfing(oCandle, aData[index - i] && index - i >= 0 )){
+            while (index - i >= 0 && this.isEngulfing(oCandle, aData[index - i]) ){
                 i++
             }
             if(i >= 4){ //at least 3 candles engulfed
