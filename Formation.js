@@ -80,6 +80,13 @@ function handleTicker(sTicker, sTimeFrame){
 	})
 }
 
+const runnerM5 = cron.schedule('59 */5 * * * *', async () => { 
+	
+	await utils.ntfyMe('Log', `crone running BTC-M5 formationscript`)
+	for await (const sTicker of aTicker) {
+		await handleTicker(sTicker, '5m')
+	}
+})
 const runnerM15 = cron.schedule('59 */15 * * * *', async () => { 
 	
 	await utils.ntfyMe('Log', `crone running BTC-M15 formationscript`)
@@ -120,6 +127,7 @@ const runnerH4 = cron.schedule('1 0,4,8,12,16,20 * * *', async () => {
 
 
 
+runnerM5.start()
 runnerM15.start() 
 runnerM30.start() 
 runnerH1.start()
