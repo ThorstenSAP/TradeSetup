@@ -330,7 +330,7 @@ class Utils{
                     }
                 } else if(this.getDirectionOfCandle(oPrevCandle) == 1 && this.getDirectionOfCandle(oCandle) == 0){
                     //bull engulfing of bear candle
-                    if(oPrevCandle.open >= oCandle.close && oCandle.open <= oPrevCandle.open){
+                    if(oCandle.close >= oPrevCandle.open && oCandle.open <= oPrevCandle.open){
                         return true //bullish engulfing
                     }
                 } else if(this.getDirectionOfCandle(oPrevCandle) == 0 && this.getDirectionOfCandle(oCandle) == 1){
