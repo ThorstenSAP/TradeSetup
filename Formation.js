@@ -40,7 +40,7 @@ function handleTicker(sTicker, sTimeFrame){
 				console.log(`Wyckoff ${oLatestCandle.timestamp}`)
 			}
 			if(utils.isEveMorningStar(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
-				if(utils.getDirectionOfCandle(aData[i]) == 0){
+				if(utils.getDirectionOfCandle(oLatestCandle) == 0){
 					utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `MorningStar ${oLatestCandle.timestamp}`)
 					console.log(`MorningStar ${oLatestCandle.timestamp}`)
 				} else {
