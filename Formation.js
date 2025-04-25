@@ -30,7 +30,7 @@ function handleTicker(sTicker, sTimeFrame){
 				utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `InsideOut ${oPrevCandle.timestamp}`)
 				console.log(`InsideOut ${oLatestCandle.timestamp}`)
 			}
-			if(utils.isWyckoff(oLatestCandle, 2, aData)){
+			if(utils.isWyckoff(oLatestCandle, aData.length - 2, aData)){
 				utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `Wyckoff ${oLatestCandle.timestamp}`)
 				console.log(`Wyckoff ${oLatestCandle.timestamp}`)
 			}
