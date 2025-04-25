@@ -10,7 +10,7 @@ const bitget = new BitgetApi()
 const aTicker = ['BTC']
 function handleTicker(sTicker, sTimeFrame){
 	return new Promise((resolve, reject) => {
-		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '10')
+		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '20')
 		.then(async (aData) => {
             //check prev candles for a formation
 
@@ -26,11 +26,6 @@ function handleTicker(sTicker, sTimeFrame){
 				utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `MC Candle ${oPrevCandle.timestamp}`)
 				console.log(`MC Candle ${oLatestCandle.timestamp}`)
 			}
-			//probably needs a given level to watch for -> otherwise there will be too many alerts
-			// if(utils.isLiquidation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
-		// 	utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
-			//     console.log(`Liquidation ${oLatestCandle.timestamp}`)
-			// }
 			if(utils.isInsideOutFormation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
 				utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `InsideOut ${oPrevCandle.timestamp}`)
 				console.log(`InsideOut ${oLatestCandle.timestamp}`)
@@ -49,28 +44,6 @@ function handleTicker(sTicker, sTimeFrame){
 				}
 			}
 
-
-			// for (let i = aData.length -3; i >= 1 ; i--) {
-                
-			// 	// if(utils.isInsideOutFormation(aData[i+1], aData[i], aData[i-1])){
-			// 	// 	utils.ntfyMe(`BTC-${sTimeFrame}`, `InsideOut ${aData[i+1].timestamp}`)
-            //     //     console.log(`InsideOut ${aData[i+1].timestamp}`)
-            //     // }
-			// 	if(utils.isWyckoff(aData[i], i, aData)){
-			// 		utils.ntfyMe(`BTC-${sTimeFrame}`, `Wyckoff ${aData[i+1].timestamp}`)
-			// 		console.log(`Wyckoff ${aData[i].timestamp}`)
-			// 	}
-			// 	if(utils.isEveMorningStar(aData)){
-			// 		//TODO retest
-			// 		utils.ntfyMe(`BTC-${sTimeFrame}`, `EveMorningStar ${aData[i+1].timestamp}`)
-            //         console.log(`EveMorningStar ${aData[i+1].timestamp}`)
-            //     }
-			// 	//TODO U-V Formation (4Candles)
-			// 	// if(utils.isUFormation(aData[i], i, aData)){
-			// 	// 	console.log(`u/V Formation ${aData[i+1].timestamp}`)
-			// 	// }
-
-            // }
 
 		})
 		.catch(err => {
@@ -137,7 +110,7 @@ runnerH4.start()
 
 // function testFormation(sTicker, sTimeFrame){
 // 	return new Promise((resolve, reject) => {
-// 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '20')
+// 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '10')
 // 		.then(async (aData) => {
 // 			const oLatestCandle =  aData[aData.length - 2] //latest candle
 // 			const oPrevCandle = aData[aData.length - 3] //last of formation candle
@@ -148,11 +121,6 @@ runnerH4.start()
 // 			utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `MC Candle ${oPrevCandle.timestamp}`)
 // 			console.log(`MC Candle ${oLatestCandle.timestamp}`)
 // 		}
-// 		//probably needs a given level to watch for -> otherwise there will be too many alerts
-// 		// if(utils.isLiquidation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
-// 	// 	utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `Liquidation ${oPrevCandle.timestamp}`)
-// 		//     console.log(`Liquidation ${oLatestCandle.timestamp}`)
-// 		// }
 // 		if(utils.isInsideOutFormation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
 // 			utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `InsideOut ${oPrevCandle.timestamp}`)
 // 			console.log(`InsideOut ${oLatestCandle.timestamp}`)
@@ -174,19 +142,12 @@ runnerH4.start()
 // 			for (let i = aData.length -2; i >= 2 ; i--) {
 // 				if(i == 8){
 // 					debugger
-// 					if(utils.isWyckoff(aData[i], i - 2, aData)){
-// 						// utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `Wyckoff ${oLatestCandle.timestamp}`)
-// 						console.log(`Wyckoff ${oLatestCandle.timestamp}`)
-// 					}
+					
+// 					// if(utils.isWyckoff(oPrevPrevCandle, aData.length - 4, aData)){
+// 					// 	utils.ntfyMe(`${sTicker}-${sTimeFrame}`, `Wyckoff ${oLatestCandle.timestamp}`)
+// 					// 	console.log(`Wyckoff ${oLatestCandle.timestamp}`)
+// 					// }
 // 				}
-// 				// if(utils.isEveMorningStar(aData[i], aData[i-1], aData[i-2])){
-// 				// 	//already implemented without retest
-// 				// 	if(utils.getDirectionOfCandle(aData[i]) == 0){
-// 				// 		console.log(`MorningStar ${aData[i].timestamp}`)
-// 				// 	} else {
-// 				// 		console.log(`EveStar ${aData[i].timestamp}`)
-// 				// 	}
-//                 // }
 
 //             }
 // 			setTimeout(() => {resolve()}, 1000)
@@ -201,6 +162,6 @@ runnerH4.start()
 
 
 // async function main () {
-//     await testFormation('BTC', '5m')
+//     await testFormation('BTC', '30m')
 // }
 // main()
