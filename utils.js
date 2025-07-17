@@ -173,14 +173,14 @@ class Utils{
     isMCCandle(oCandle, oPrevCandle){
         
         if(this.getDirectionOfCandle(oCandle) == 0){
-            if(oCandle.low < oPrevCandle.low && oCandle.close > oPrevCandle.high){
+            if(oCandle.low < oPrevCandle.low && oCandle.close > oPrevCandle.close){
                 return true
             } else {
                 return false
             }
         } else {
             //bear MC
-            if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.low){
+            if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.close){
                 return true
             } else {
                 return false
@@ -386,6 +386,23 @@ class Utils{
         }
         
     }
+    hasCandlegrabbedHighs(oCandle, oPrevCandle){
+        if(oCandle.high >= oPrevCandle.high && oCandle.close < oPrevCandle.high){
+            return true
+        } else {
+            return false
+        }
+    }
+    hasCandlegrabbedLows(oCandle, oPrevCandle){
+        if(oCandle.low <= oPrevCandle.low && oCandle.close > oPrevCandle.low){
+            return true
+        } else {
+            return false
+        }
+    }
+
+
+
     didCandleTouchFVG(oFVG, oCandle){
         if(oFVG.iDirection == 0){
             if(oCandle.close > oFVG.fRangeLow && 
