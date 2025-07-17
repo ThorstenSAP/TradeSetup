@@ -73,7 +73,6 @@ async function fetchGoldData(url) {
 //   fetchGoldData();
 
 
-
 // const runnerM15 = cron.schedule('10 */15 * * * *', async () => { 
 //     const url = 'https://financialmodelingprep.com/stable/historical-chart/15min?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
 	
@@ -86,13 +85,13 @@ const runnerM30 = cron.schedule('10 */30 * * * *', async () => {
 	await utils.ntfyMe('Log', `crone running XAUUSD M30 script`)
 	fetchGoldData(url);
 })
-const runnerH1 = cron.schedule('15 * */1 * * *', async () => { 
+const runnerH1 = cron.schedule('15 0 */1 * * *', async () => { 
     const url = 'https://financialmodelingprep.com/stable/historical-chart/1hour?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
 	
 	await utils.ntfyMe('Log', `crone running XAUUSD H1 script`)
 	fetchGoldData(url);
 })
-const runnerH4 = cron.schedule('10 * */4 * * *', async () => { 
+const runnerH4 = cron.schedule('10 0 */4 * * *', async () => { 
     const url = 'https://financialmodelingprep.com/stable/historical-chart/4hour?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
 	
 	await utils.ntfyMe('Log', `crone running XAUUSD H4 script`)
