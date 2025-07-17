@@ -1,5 +1,4 @@
 const cron = require('node-cron')
-const _ = require('lodash')
 const { Utils } = require('./utils.js')
 const utils = new Utils()
 
