@@ -26,8 +26,10 @@ async function fetchGoldData(url) {
             //ignore
         } else if(utils.hasCandlegrabbedHighs (oLatestCandle, oPrevCandle)){
             utils.ntfyMe(`${sTicker}`, `HighGrabbed`)
+            console.log(`MC Candle ${oLatestCandle.timestamp}`)
         } else if(utils.hasCandlegrabbedLows (oLatestCandle, oPrevCandle)){
             utils.ntfyMe(`${sTicker}`, `LowGrabbed`)
+            console.log(`MC Candle ${oLatestCandle.timestamp}`)
         }
 
         
