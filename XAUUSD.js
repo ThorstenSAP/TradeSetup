@@ -28,35 +28,39 @@ async function fetchGoldData(sUrl, sTimeFrame) {
         .setZone('UTC+2')
         .toFormat('HH:mm');
                 
-        if(utils.hasCandlegrabbedHighs (oLatestCandle, oPrevCandle) && utils.hasCandlegrabbedLows (oLatestCandle, oPrevCandle)){
-            //ignore
-        } else if(utils.hasCandlegrabbedHighs (oLatestCandle, oPrevCandle)){
-            utils.ntfyMe(`${sTicker}`, `HighGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-            console.log(`HighGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-        } else if(utils.hasCandlegrabbedLows (oLatestCandle, oPrevCandle)){
-            utils.ntfyMe(`${sTicker}`, `LowGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-            console.log(`LowGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-        }
+        if(!(utils.hasCandlegrabbedHighs (oLatestCandle, oPrevCandle) && utils.hasCandlegrabbedLows (oLatestCandle, oPrevCandle))){
+            if(utils.hasCandlegrabbedHighs (oLatestCandle, oPrevCandle)){
+                utils.ntfyMe(`${sTicker}`, `HighGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                console.log(`HighGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+            } else if(utils.hasCandlegrabbedLows (oLatestCandle, oPrevCandle)){
+                utils.ntfyMe(`${sTicker}`, `LowGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                console.log(`LowGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+            }
+
+            if(utils.isMCCandle(oLatestCandle, oPrevCandle)){
+                utils.ntfyMe(`${sTicker}`, `MC Candle - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                console.log(`MC Candle - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+            }
+
+            if(utils.isLiquidation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
+                utils.ntfyMe(`${sTicker}`, `Liquidation - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                console.log(`Liquidation ${oLatestCandle.timestamp} - ${sTimeFrame}`)
+            }
+            
+            if(utils.isEveMorningStar(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
+                if(utils.getDirectionOfCandle(oLatestCandle) == 0){
+                    utils.ntfyMe(`${sTicker}`, `MorningStar ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                    console.log(`MorningStar ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                } else {
+                    utils.ntfyMe(`${sTicker}`, `EveStar ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                    console.log(`EveStar ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                }
+            }
+        } 
 
         
-        if(utils.isMCCandle(oLatestCandle, oPrevCandle)){
-            utils.ntfyMe(`${sTicker}`, `MC Candle - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-            console.log(`MC Candle - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-        }
-        if(utils.isLiquidation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
-            utils.ntfyMe(`${sTicker}`, `Liquidation - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-            console.log(`Liquidation ${oLatestCandle.timestamp} - ${sTimeFrame}`)
-        }
 
-        if(utils.isEveMorningStar(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
-            if(utils.getDirectionOfCandle(oLatestCandle) == 0){
-                utils.ntfyMe(`${sTicker}`, `MorningStar ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-                console.log(`MorningStar ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-            } else {
-                utils.ntfyMe(`${sTicker}`, `EveStar ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-                console.log(`EveStar ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-            }
-        }
+        
 
         // for (let i = 0; i < aData.length - 4 ; i++) {
                 
