@@ -85,8 +85,8 @@ async function fetchGoldData(sUrl, sTimeFrame) {
     }
   }
   
-  const url = 'https://financialmodelingprep.com/stable/historical-chart/30min?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';  
-  fetchGoldData(url);
+//   const url = 'https://financialmodelingprep.com/stable/historical-chart/30min?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';  
+//   fetchGoldData(url);
 
 
 // const runnerM15 = cron.schedule('10 */15 * * * *', async () => { 
@@ -116,6 +116,6 @@ const runnerH4 = cron.schedule('20 0 01,05,09,13,17,21 * * *', async () => {
 })
 
 // runnerM15.start()
-// runnerM30.start()
-// runnerH1.start()
-// runnerH4.start()
+runnerM30.start()
+runnerH1.start()
+runnerH4.start()
