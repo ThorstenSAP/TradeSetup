@@ -18,8 +18,8 @@ async function fetchGoldData(sUrl, sTimeFrame) {
   
         const aData = await response.json();
 
-        const oLatestCandle =  aData[0] //last candle
-        const oPrevCandle = aData[1] //last of formation candle
+        const oLatestCandle =  aData[1] //last candle
+        const oPrevCandle = aData[2] //last of formation candle
         const oPrevPrevCandle = aData[2] //potential formation candle
         // const oPrevPrevPrevCandle =  aData[4] //potential formation candle
 
@@ -32,14 +32,17 @@ async function fetchGoldData(sUrl, sTimeFrame) {
             if(utils.hasCandlegrabbedHighs (oLatestCandle, oPrevCandle)){
                 utils.ntfyMe(`${sTicker}`, `HighGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
                 console.log(`HighGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                if(utils.isEngulfing(oLatestCandle, oPrevCandle)){
+                    utils.ntfyMe(`${sTicker}`, `Engulfing - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                    console.log(`Engulfing - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                }
             } else if(utils.hasCandlegrabbedLows (oLatestCandle, oPrevCandle)){
                 utils.ntfyMe(`${sTicker}`, `LowGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
                 console.log(`LowGrabbed - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-            }
-
-            if(utils.isMCCandle(oLatestCandle, oPrevCandle)){
-                utils.ntfyMe(`${sTicker}`, `MC Candle - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
-                console.log(`MC Candle - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                if(utils.isEngulfing(oLatestCandle, oPrevCandle)){
+                    utils.ntfyMe(`${sTicker}`, `Engulfing - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                    console.log(`Engulfing - ${oLatestCandle.timestamp} - ${sTimeFrame} `)
+                }
             }
 
             if(utils.isLiquidation(oLatestCandle, oPrevCandle, oPrevPrevCandle)){
@@ -82,8 +85,8 @@ async function fetchGoldData(sUrl, sTimeFrame) {
     }
   }
   
-//   const url = 'https://financialmodelingprep.com/stable/historical-chart/30min?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';  
-//   fetchGoldData(url);
+  const url = 'https://financialmodelingprep.com/stable/historical-chart/30min?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';  
+  fetchGoldData(url);
 
 
 // const runnerM15 = cron.schedule('10 */15 * * * *', async () => { 
@@ -113,6 +116,6 @@ const runnerH4 = cron.schedule('20 0 01,05,09,13,17,21 * * *', async () => {
 })
 
 // runnerM15.start()
-runnerM30.start()
-runnerH1.start()
-runnerH4.start()
+// runnerM30.start()
+// runnerH1.start()
+// runnerH4.start()

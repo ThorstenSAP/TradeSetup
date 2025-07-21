@@ -170,6 +170,7 @@ class Utils{
             }
         }
     }
+    //check with high grab and engulfing...
     isMCCandle(oCandle, oPrevCandle){
         
         if(this.getDirectionOfCandle(oCandle) == 0){
@@ -180,11 +181,28 @@ class Utils{
             }
         } else {
             //bear MC
-            if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.close){
-                return true
-            } else {
-                return false
-            }
+                //prev bearish candle
+                if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.close){
+                    return true
+                } else {
+                    return false
+                }
+            // if(this.getDirectionOfCandle(oPrevCandle) == 0){
+            //     //prev bullish candle
+            //     if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.open){
+            //         return true
+            //     } else {
+            //         return false
+            //     }
+
+            // } else {
+            //     //prev bearish candle
+            //     if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.close){
+            //         return true
+            //     } else {
+            //         return false
+            //     }
+            // }
         }
     }
     isLiquidation(oCandle, oPrevCandle, oPrevPrevCandle){
