@@ -18,8 +18,8 @@ async function fetchGoldData(sUrl, sTimeFrame) {
   
         const aData = await response.json();
 
-        const oLatestCandle =  aData[1] //last candle
-        const oPrevCandle = aData[2] //last of formation candle
+        const oLatestCandle =  aData[0] //last candle
+        const oPrevCandle = aData[1] //last of formation candle
         const oPrevPrevCandle = aData[2] //potential formation candle
         // const oPrevPrevPrevCandle =  aData[4] //potential formation candle
 
