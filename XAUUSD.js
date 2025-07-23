@@ -95,7 +95,7 @@ async function fetchGoldData(sUrl, sTimeFrame) {
 // 	await utils.ntfyMe('Log', `crone running XAUUSD M15 script`)
 // 	fetchGoldData(url);
 // })
-const runnerM30 = cron.schedule(' *27,57 * * * *', async () => { 
+const runnerM30 = cron.schedule(' 27,57 * * * *', async () => { 
     const url = 'https://financialmodelingprep.com/stable/historical-chart/30min?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
 	
 	await utils.ntfyMe('Log', `crone running XAUUSD M30 script`)
