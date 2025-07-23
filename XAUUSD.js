@@ -95,19 +95,19 @@ async function fetchGoldData(sUrl, sTimeFrame) {
 // 	await utils.ntfyMe('Log', `crone running XAUUSD M15 script`)
 // 	fetchGoldData(url);
 // })
-const runnerM30 = cron.schedule('* */55 * * * *', async () => { 
+const runnerM30 = cron.schedule(' */55 * * * *', async () => { 
     const url = 'https://financialmodelingprep.com/stable/historical-chart/30min?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
 	
 	await utils.ntfyMe('Log', `crone running XAUUSD M30 script`)
 	fetchGoldData(url, 'M30');
 })
-const runnerH1 = cron.schedule('* 55 */1 * * *', async () => { 
+const runnerH1 = cron.schedule(' 55 */1 * * *', async () => { 
     const url = 'https://financialmodelingprep.com/stable/historical-chart/1hour?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
 	
 	await utils.ntfyMe('Log', `crone running XAUUSD H1 script`)
 	fetchGoldData(url, 'H1');
 })
-const runnerH4 = cron.schedule('57 0 01,05,09,13,17,21 * * *', async () => { 
+const runnerH4 = cron.schedule(' 57 01,05,09,13,17,21 * * *', async () => { 
     // minute 2 of hour 01, 05, 09, 13, 17 and 21 //Server is at UTC - exchange at UTC-5
     const url = 'https://financialmodelingprep.com/stable/historical-chart/4hour?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
 	
