@@ -575,7 +575,7 @@ class Utils{
         
     }
     
-    ntfyMeCSVList(sTopic, sHeader aData){
+    ntfyMeCSVList(sTopic, sHeader, aData){
     
         // build CSV string with only "symbol"
         const header = sHeader
