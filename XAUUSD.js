@@ -107,15 +107,8 @@ const runnerH1 = cron.schedule(' 57 */1 * * *', async () => {
 	await utils.ntfyMe('Log', `crone running XAUUSD H1 script`)
 	fetchGoldData(url, 'H1');
 })
-const runnerH4 = cron.schedule(' 58 01,05,09,13,17,21 * * *', async () => { 
-    // minute 2 of hour 01, 05, 09, 13, 17 and 21 //Server is at UTC - exchange at UTC-5
-    const url = 'https://financialmodelingprep.com/stable/historical-chart/4hour?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
-	
-	await utils.ntfyMe('Log', `crone running XAUUSD H4 script`)
-	fetchGoldData(url, 'H4');
-})
+
 
 // runnerM15.start()
 runnerM30.start()
 runnerH1.start()
-runnerH4.start()
