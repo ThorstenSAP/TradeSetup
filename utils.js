@@ -405,18 +405,24 @@ class Utils{
         
     }
     hasCandlegrabbedHighs(oCandle, oPrevCandle){
-        if(oCandle.high >= oPrevCandle.high && oCandle.close < oPrevCandle.high){
-            return true
-        } else {
-            return false
+        if(oCandle && oPrevCandle){
+            if(oCandle.high >= oPrevCandle.high && oCandle.close < oPrevCandle.high){
+                return true
+            } else {
+                return false
+            }
         }
     }
     hasCandlegrabbedLows(oCandle, oPrevCandle){
-        if(oCandle.low <= oPrevCandle.low && oCandle.close > oPrevCandle.low){
-            return true
-        } else {
-            return false
+        if(oCandle && oPrevCandle){
+            if(oCandle.low <= oPrevCandle.low && oCandle.close > oPrevCandle.low){
+                return true
+            } else {
+                return false
+            }
         }
+
+
     }
 
 
@@ -567,6 +573,28 @@ class Utils{
 
         })
         
+    }
+    
+    ntfyMeCSVList(sTopic, sHeader aData){
+    
+        // build CSV string with only "symbol"
+        const header = sHeader
+        const rows = aData.map(obj => `${obj.symbol},  ${obj.lowsGrabbed}`);
+        const csv = [header, ...rows].join("\n");
+    
+        // send to ntfy
+        axios.post(`http://87.106.59.125/${sTopic}`, csv, {
+            headers: {
+                "Content-Type": "text/csv"
+            }
+        })
+        .then(res => {
+        console.log("✅ CSV sent as attachment:", res.status);
+        })
+        .catch(err => {
+        console.error("❌ Error:", err.message);
+        });
+    
     }
       
 
