@@ -3,7 +3,7 @@ const { DateTime } = require('luxon')
 const { Utils } = require('./utils.js')
 const utils = new Utils()
 
-const sTicker = 'XAUUSD'
+const sTicker = 'XAUUSD-M15'
 
 async function fetchGoldData(sUrl, sTimeFrame) {
     // const url = 'https://financialmodelingprep.com/stable/historical-chart/30min?symbol=XAUUSD&apikey=bmrHqCf73Wic7Arp856mK7v1g2lfa4A8';
