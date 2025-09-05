@@ -84,10 +84,10 @@ async function main() {
 
 const cron = require('node-cron');
 
-const runner = cron.schedule('0 6 * * 6', () => {
+const runner = cron.schedule('0 4 * * 6', () => {
   // server is UTC -> Hence, 2 hours less
   main()
-  console.log('Running Saturday 08:00 Europe/Berlin');
+  console.log('Running Saturday 06:00 Europe/Berlin');
 });
 runner.start()
 
