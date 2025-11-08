@@ -44,18 +44,22 @@ function createCandle(aHourlyData, openingDateTime, closingDateTime) {
             aHourCandles.push(oCandle)
         }
     }
-    return {
-        open: aHourCandles[0].open,
-        close: aHourCandles[aHourCandles.length - 1].close,
-        high: Math.max(...aHourCandles.map(elem => elem.high)),
-        low: Math.min(...aHourCandles.map(elem => elem.low))
+    if(aHourCandles.length == 0){
+        return {}
+    } else {
+        return {
+            open: aHourCandles[0].open,
+            close: aHourCandles[aHourCandles.length - 1].close,
+            high: Math.max(...aHourCandles.map(elem => elem.high)),
+            low: Math.min(...aHourCandles.map(elem => elem.low))
+        }
     }
 }
 
 
 async function dailyCheck() {
     //TODO adjust tickers
-    const aTickers = await readTickersFromCSV('./general/TickersUSLargeCap.csv');
+    const aTickers = await readTickersFromCSV('./EMAWeeklyAligned.csv');
     for (const sTicker of aTickers) {
         const aWeeklyData = await getChartData(sTicker, '1wk')
         if (aWeeklyData) {
