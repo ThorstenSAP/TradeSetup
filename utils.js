@@ -23,43 +23,12 @@ class Utils{
     }
 
     //aData = array with objects
-    // saveArrayToCSV(aDataObjects){
-    //     // const header = ['number', 'first', 'last', 'handle'];
-    //     // const dataArrays = [
-    //     //     [1, 'Mark', 'Otto', '@mdo'],
-    //     //     [2, 'Jacob', 'Thornton', '@fat'],
-    //     //     [3, 'Larry', 'the Bird', '@twitter'],
-    //     // ];
-    //     // const csvFromArrayOfArrays = convertArrayToCSV(dataArrays, {
-    //     //     header,
-    //     //     separator: ';'
-    //     // });
-    //     // const aDataObjects = [
-    //     //     {
-    //     //         number: 1,
-    //     //         first: 'Mark',
-    //     //         last: 'Otto',
-    //     //         handle: '@mdo',
-    //     //     },
-    //     //     {
-    //     //         number: 2,
-    //     //         first: 'Jacob',
-    //     //         last: 'Thornton',
-    //     //         handle: '@fat',
-    //     //     },
-    //     //     {
-    //     //         number: 3,
-    //     //         first: 'Larry',
-    //     //         last: 'the Bird',
-    //     //         handle: '@twitter',
-    //     //     },
-    //     // ];
-        
-    //     const csvFromArrayOfObjects = convertArrayToCSV(aDataObjects)
-    //     const writeStream = fs.createWriteStream('result.csv');
-    //     writeStream.write(csvFromArrayOfObjects);
-    //     writeStream.end()
-    // }
+     saveArrayToCSV(aSymbols, sFileName){
+         const csvString = ['symbol', ...aSymbols].join('\n')
+         const writeStream = fs.createWriteStream(`${sFileName}.csv`);
+         writeStream.write(csvString);
+         writeStream.end()
+    }
     saveArrayToXlsx(aDataObjects){
         var ws = XLSX.utils.json_to_sheet(aDataObjects);
         /* create workbook and export */
@@ -458,6 +427,13 @@ class Utils{
             // } 
         }
         return aPrevClose
+    }
+    copyClosingPricesFromData(aData){
+        let aClosingPrices = []
+        for (const oCandle of aData) {
+            aClosingPrices.push(oCandle.close)
+        }
+        return aClosingPrices
     }
     setRsi(aData){
         const rsi = new RSI(this.convertApiResponseForRsiCalc(aData), 14)
