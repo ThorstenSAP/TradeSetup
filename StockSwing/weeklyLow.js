@@ -1,5 +1,4 @@
 const fs = require('fs')
-const axios = require('axios')
 const csv = require('csv-parser');
 const yahooFinance = require('yahoo-finance2').default;
 const { Utils } = require('../utils.js')
