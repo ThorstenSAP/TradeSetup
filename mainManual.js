@@ -4,11 +4,12 @@ const { Utils } = require('./utils.js')
 const utils = new Utils()
 const bitget = new BitgetApi()
 // const aTicker = ['BTC', 'ETH', 'XRP', 'SOL', 'ADA', 'UNI', 'LINK', 'VET', 'AAVE', 'DOGE'] 
+// const aTicker = ['BTC', 'ETH', 'XRP', 'SOL', 'ADA', 'UNI', 'LINK', 'VET', 'AAVE', 'DOGE'] 
 // ['EOS', 'LTC', 'ADA', 'LINK', 'TRX', 'DOT', 'DOGE', 'SOL', 'MATIC', 'VET', 'BNB', 'UNI', 'ICP', 'AAVE', 'FIL', 'XLM', 'ATOM',
 //   'XTZ', 'SUSHI', 'AXS', 'THETA', 'AVAX', 'SHIB', 'MANA', 'PEPE' ]
 
 
-const aTicker = ['BTC']
+const aTicker = ['XRP']
 function handleTicker(sTicker, sTimeFrame, iSma1, iSma2){
 	return new Promise((resolve, reject) => {
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '100')

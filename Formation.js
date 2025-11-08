@@ -7,7 +7,7 @@ const utils = new Utils()
 const bitget = new BitgetApi()
 
 
-const aTicker = ['BTC']
+const aTicker = ['BTC', 'ETH', 'SOL', 'XRP']
 function handleTicker(sTicker, sTimeFrame){
 	return new Promise((resolve, reject) => {
 		bitget.getTickerData(`${sTicker}USDT`, sTimeFrame, '20')
@@ -90,7 +90,7 @@ const runnerH2 = cron.schedule('1 */2 * * *', async () => {
 })
 
 const runnerH4 = cron.schedule('1 0,4,8,12,16,20 * * *', async () => { 
-// minute 2 of hour 01, 05, 09, 13, 17 and 21
+//TODO  minute 2 of hour 01, 05, 09, 13, 17 and 21
 	
 	await utils.ntfyMe('Log', `crone running BTC-H4 formationscript`)
 	for await (const sTicker of aTicker) {

@@ -3,8 +3,17 @@
     "axios": "^1.6.8",
     "bitget-api": "^2.0.5",
     "calc-rsi": "^1.0.0",
+    "csv-parser": "^3.2.0",
+    "fs": "^0.0.1-security",
+    "jquery": "^3.7.1",
+    "jsdom": "^26.1.0",
+    "luxon": "^3.7.1",
     "node-cron": "^3.0.3",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
+    "sma": "^0.1.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz",
+    "yahoo-finance2": "^2.13.3",
+    "yf": "^0.0.1",
+    "yf-api": "^0.1.5"
   },
   "devDependencies": {
     "finmath": "^2.0.1"
