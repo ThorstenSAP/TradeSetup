@@ -550,6 +550,25 @@ class Utils{
         })
         
     }
+
+    createCandle(aHourlyData, openingDateTime, closingDateTime) {
+        let aHourCandles = []
+        for (const oCandle of aHourlyData) {
+            if (oCandle.date >= openingDateTime && oCandle.date <= closingDateTime) {
+                aHourCandles.push(oCandle)
+            }
+        }
+        if(aHourCandles.length == 0){
+            return {}
+        } else {
+            return {
+                open: aHourCandles[0].open,
+                close: aHourCandles[aHourCandles.length - 1].close,
+                high: Math.max(...aHourCandles.map(elem => elem.high)),
+                low: Math.min(...aHourCandles.map(elem => elem.low))
+            }
+        }
+    }
     
     ntfyMeCSVList(sTopic, sHeader, aData){
     

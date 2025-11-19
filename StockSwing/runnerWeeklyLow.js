@@ -1,5 +1,5 @@
 const fs = require('fs')
-const axios = require('axios')
+const cron = require('node-cron')
 const csv = require('csv-parser');
 const yahooFinance = require('yahoo-finance2').default;
 const { Utils } = require('../utils.js')
@@ -37,24 +37,6 @@ function readTickersFromCSV(filepath) {
     });
 }
 
-function createCandle(aHourlyData, openingDateTime, closingDateTime) {
-    let aHourCandles = []
-    for (const oCandle of aHourlyData) {
-        if (oCandle.date >= openingDateTime && oCandle.date <= closingDateTime) {
-            aHourCandles.push(oCandle)
-        }
-    }
-    if(aHourCandles.length == 0){
-        return {}
-    } else {
-        return {
-            open: aHourCandles[0].open,
-            close: aHourCandles[aHourCandles.length - 1].close,
-            high: Math.max(...aHourCandles.map(elem => elem.high)),
-            low: Math.min(...aHourCandles.map(elem => elem.low))
-        }
-    }
-}
 
 
 async function dailyCheck() {
@@ -82,7 +64,7 @@ async function dailyCheck() {
                 now.getUTCDate() - 1,
                 20, 30, 0, 0
             ))
-            const oPrevDay = createCandle(aH1Data, yesterdayNYSEOpeningUTC, yesterdayNYSEClosingUTC)
+            const oPrevDay = utils.createCandle(aH1Data, yesterdayNYSEOpeningUTC, yesterdayNYSEClosingUTC)
 
             if(utils.hasCandlegrabbedLows (oPrevWeekCandle, oPrevDay)){
                 console.log(sTicker)
@@ -92,40 +74,74 @@ async function dailyCheck() {
     }
 }
 
-async function intradayCheck() {
-    //TODO adjust tickers
-    const aTickers = await readTickersFromCSV('./general/TickersUSLargeCap.csv');
+async function intradayCheck(sCSVName) {
+    const today = new Date()
+    const aTickers = await readTickersFromCSV(`./${sCSVName}.csv`);
     for (const sTicker of aTickers) {
         const aWeeklyData = await getChartData(sTicker, '1wk')
         if (aWeeklyData) {
-            aWeeklyData.pop() //crnt week is provided from monday and friday
+            if(today.getDay() != 1 || aWeeklyData[aWeeklyData.length - 1].date.getDate() == today.getDate()){
+                aWeeklyData.pop() //crnt week is provided from monday and friday
+            }
             const oPrevWeekCandle = aWeeklyData[aWeeklyData.length - 2]
             const aH1Data = await getChartData(sTicker, '1h')
             aH1Data.pop()
 
-            const now = new Date();
-            const todayNYSEOpeningUTC = new Date(Date.UTC(
-                now.getUTCFullYear(),
-                now.getUTCMonth(),
-                now.getUTCDate(),
-                14, 30, 0, 0
-            ))
-            const todayNYSEH4CloseUTC = new Date(Date.UTC(
-                now.getUTCFullYear(),
-                now.getUTCMonth(),
-                now.getUTCDate(),
-                18, 30, 0, 0
-            ))
+            const oPrevCandle = {}
+            if(today.getHours() == 19){
+                const oPrevH4 = utils.createCandle(aH1Data,
+                    new Date(Date.UTC(
+                        today.getUTCFullYear(),
+                        today.getUTCMonth(),
+                        today.getUTCDate(),
+                        14, 30, 0, 0
+                    )),
+                    new Date(Date.UTC(
+                        today.getUTCFullYear(),
+                        today.getUTCMonth(),
+                        today.getUTCDate(),
+                        18, 30, 0, 0
+                    )))
+                if(utils.hasCandlegrabbedLows (oPrevH4, oPrevWeekCandle)){
+                    console.log(`${sTicker} - H4`)
+                }
+            } 
+            if ([17,19,21].includes(today.getHours())){
+                const beginHour =today.getHours() -3 
+                const crntHour = today.getHours() -1 
+                const oPrevCandle = utils.createCandle(aH1Data,
+                                    new Date(Date.UTC(
+                                        today.getUTCFullYear(),
+                                        today.getUTCMonth(),
+                                        today.getUTCDate(),
+                                        beginHour, 30, 0, 0
+                                    )),
+                                    new Date(Date.UTC(
+                                        today.getUTCFullYear(),
+                                        today.getUTCMonth(),
+                                        today.getUTCDate(),
+                                        crntHour, 30, 0, 0
+                                    )))
+                if(utils.hasCandlegrabbedLows (oPrevCandle, oPrevWeekCandle)){
+                    console.log(`${sTicker} - H2`)
+                }
+            }
 
-            const oPrevH4 = createCandle(aH1Data, todayNYSEOpeningUTC, todayNYSEH4CloseUTC)
             const oPrevHour = aH1Data[aH1Data.length - 2]
-            
-            if(utils.hasCandlegrabbedLows (oPrevWeekCandle, oPrevH4)){
+            if(utils.hasCandlegrabbedLows (oPrevHour, oPrevWeekCandle)){
                 console.log(sTicker)
             }
         }
 
     }
 }
-//intradayCheck()
-dailyCheck()
+// intradayCheck('EMAWeeklyAligned')
+
+cron.schedule('0 30 15-23 * * *', () => {
+  console.log('Running job at :30 every hour from 15:30 onward')
+    const today = new Date()
+    if(today.getHours() >= 15 && today.getHours() <= 21){
+        intradayCheck('EMAWeeklyAligned')
+    }
+  intradayCheck('EMAWeeklyAligned')
+});
