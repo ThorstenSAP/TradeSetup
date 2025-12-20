@@ -4,6 +4,7 @@ const axios = require('axios')
 
 const XLSX = require('xlsx')
 const RSI = require('calc-rsi') 
+const csv = require('csv-parser');
 
 class Utils{
     constructor(sNtfyTopic){
@@ -494,25 +495,105 @@ class Utils{
         aData[aData.length-1][`sma${iSma}`] = iSum/iSma
     }
 
-    getMACDSignal(closingPrices){
-        if(closingPrices.length <= 30){
-            return undefined
-        } else {
-            //is signalLine above or below MACD Line
-            let macd = this.calculateMACD(closingPrices)
-            let signal = this.calculateEMA(macd, 9)
 
-            return macd < signal ? 1 : 0 //macd below signal == bearish else bullish
+    createArrayOfClosingPrices(aData){
+        let result =[]
+        for (const candle of aData) {
+            result.push(candle.close)
+        }
+        return result
+    }
+
+    // getMACDSignal(aData, fastLength, slowLength){
+    //     if(aData.length <= 30){
+    //         return undefined
+    //     } else {
+    //         let aClosingPrices = this.createArrayOfClosingPrices(aData)
+    //         //is signalLine above or below MACD Line
+    //         let macd = this.calculateMACD(aClosingPrices, fastLength, slowLength)
+    //         let signal = this.calculateEMA(macd, 9)
+
+    //         return macd < signal ? -1 : 1 //macd below signal == bearish else bullish
+    //     }
+    // }
+    // calculateMACD(closingPrices, fastLength, slowLength) {
+    //     const fastEMA = this.calculateEMA(closingPrices, fastLength);
+    //     const slowEMA = this.calculateEMA(closingPrices, slowLength);
+    //     const macd = fastEMA - slowEMA;
+        
+    //     return macd;
+    // }
+    isMACDBelow0Line(oMACD){
+        if(oMACD.macdLine[oMACD.macdLine.length -1] < 0 && oMACD.signalLine[oMACD.signalLine.length -1] < 0 ){
+            return true
+        } else {
+            return false
         }
     }
-    calculateMACD(closingPrices) {
-        const ema12 = this.calculateEMA(closingPrices, 12);
-        const ema26 = this.calculateEMA(closingPrices, 26);
-        const macd = ema12 - ema26;
-        
-        return macd;
+    getMACDSignal(macd, signal){
+        if(macd > signal ){
+            return 1 //Buy
+        } else {
+            return -1 //Sell
+        }
     }
-      
+    hasMACDFlipped(oMACD){
+        if(this.getMACDSignal(oMACD.macdLine[oMACD.macdLine.length -1], oMACD.signalLine[oMACD.signalLine.length -1]) != this.getMACDSignal(oMACD.macdLine[oMACD.macdLine.length -2], oMACD.signalLine[oMACD.signalLine.length -2])){
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    calculateMACD(closingPrices, fastLength, slowLength) {
+        const ema12 = this.calculateEMAArray(closingPrices, fastLength);
+        const ema26 = this.calculateEMAArray(closingPrices, slowLength);
+
+        const macdLine = closingPrices.map((_, i) =>
+            ema12[i] !== undefined && ema26[i] !== undefined
+            ? ema12[i] - ema26[i]
+            : undefined
+        );
+
+        const validMACD = macdLine.filter((v) => v !== undefined);
+        const signalLineRaw = this.calculateEMAArray(validMACD, 9);
+
+        // Align signal line to match macdLine's index
+        const signalLine = Array(macdLine.length).fill(undefined);
+        for (let i = 0; i < signalLineRaw.length; i++) {
+            signalLine[macdLine.findIndex((v) => v !== undefined) + i] = signalLineRaw[i];
+        }
+
+        // const macdHistogram = macdLine.map((val, i) =>
+        //     val !== undefined && signalLine[i] !== undefined
+        //     ? val - signalLine[i]
+        //     : undefined
+        // );
+
+        return {
+            macdLine,
+            signalLine,
+            // macdHistogram,
+        };
+    }
+
+    calculateEMAArray(prices, period) {
+        const alpha = 2 / (period + 1);
+        const ema = [];
+
+        // Start with a simple moving average for the first EMA value
+        let sma = prices.slice(0, period).reduce((sum, val) => sum + val, 0) / period;
+        ema[period - 1] = sma;
+
+        // Continue with EMA calculation
+        for (let i = period; i < prices.length; i++) {
+            sma = prices[i] * alpha + sma * (1 - alpha);
+            ema[i] = sma;
+        }
+
+        return ema;
+    }
+
     calculateEMA(closingPrices, period) {
         const k = 2 / (period + 1);
         let ema = closingPrices[0];
@@ -521,6 +602,21 @@ class Utils{
         }
       
         return ema;
+    }
+
+    readTickersFromCSV(filepath) {
+      return new Promise((resolve, reject) => {
+        const tickers = [];
+        fs.createReadStream(filepath)
+          .pipe(csv())
+          .on('data', (row) => {
+            if (row.symbol) tickers.push(row.symbol.trim());
+          })
+          .on('end', () => {
+            resolve(tickers);
+          })
+          .on('error', reject);
+      });
     }
     
 
