@@ -66,12 +66,7 @@ async function main() {
             aData.pop() //crnt week is provided from monday and friday
             const oLatestCandle = aData[aData.length - 1]
             let oPrevCandle = aData[aData.length - 2]
-                
-            if (await checkEMAs(aData)){
-              aEMAAlignmend.push(sTicker)
-              //TODO wegschreiben für Fokusliste
-            }
-            /*
+
             if(!oLatestCandle || !oPrevCandle){
               debugger;
             }
@@ -88,7 +83,6 @@ async function main() {
             if(cnt > 0){
                 aWeeklyLowsGrabbed.push({symbol: sTicker, lowsGrabbed: cnt})
             }
-            */
         }
     }
     //sort asc
@@ -98,6 +92,28 @@ async function main() {
     
     //utils.ntfyMeCSVList('StocksLowsGrabbed', "symbol,lowsGrabbed", aWeeklyLowsGrabbed)
     //utils.ntfyMeCSVList('StocksWeeklyEngulfing', "symbol", aWeeklyEngulfings)
+    debugger;
+    utils.saveArrayToCSV(aWeeklyLowsGrabbed.map(obj => obj.symbol), 'aWeeklyLowsGrabbed')
+
+}
+
+async function getWeeklyEMAAlignedTickers() {
+    let aEMAAlignmend = []
+    const aTickers = await readTickersFromCSV('./general/TickersUSLargeCap.csv');
+    for (const sTicker of aTickers) {
+       //if(sTicker === 'ADSK')
+        // debugger;
+
+        //const aData = await getWeeklyData(sTicker);
+        const aData = await getWeeklyData(sTicker)
+        if (aData) {
+            aData.pop() //crnt week is provided from monday and friday
+            if (await checkEMAs(aData)){
+              aEMAAlignmend.push(sTicker)
+            }
+        }
+    }
+    
       utils.saveArrayToCSV(aEMAAlignmend, 'EMAWeeklyAligned')
 
 }
@@ -112,5 +128,6 @@ const runner = cron.schedule('0 4 * * 6', () => {
 runner.start()
 */
 
-main()
+getWeeklyEMAAlignedTickers()
+// main()
 

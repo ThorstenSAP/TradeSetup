@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@massive.com/client-js": "^10.1.0",
+    "@polygon.io/client-js": "^8.2.0",
+    "dotenv": "^17.2.3",
+    "technicalindicators": "^3.1.0"
+  }
+}

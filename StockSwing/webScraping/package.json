@@ -12,6 +12,6 @@
   "dependencies": {
     "cheerio": "^1.0.0",
     "node-fetch": "^3.3.2",
-    "puppeteer": "^24.32.1"
+    "puppeteer": "^24.35.0"
   }
 }

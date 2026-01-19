@@ -76,7 +76,7 @@ function buildCrntH4Candle(aData) {
         do {
             aCandle.push(aData[cnt])
             cnt++
-        } while (!(new Date(aData[cnt].time).getMinutes() == 0 && [3, 7, 11, 15, 19].includes(new Date(aData[cnt].time).getHours())))
+        } while (!(new Date(aData[cnt].time).getMinutes() == 0 && [4, 8, 12, 16, 20].includes(new Date(aData[cnt].time).getHours())))
             aCandle.push(aData[cnt]) //add first candle of H4 Candle - otherwise min 45 and hours -1
 
         res({
@@ -92,7 +92,7 @@ function buildCrntH4Candle(aData) {
 
 async function main() {
     const utils = new Utils()
-    buildH4Candle(3, 7).then(oCandle => {
+    buildH4Candle(4, 8).then(oCandle => {
         let oPrevH4Candle = oCandle
         cron.schedule('0 14,29,44,59 * * * *', () => {
             console.log('running cron runner: ' + new Date().getMinutes())
@@ -106,16 +106,16 @@ async function main() {
                         switch (new Date().getHours()) {
                             case 7:
                                 console.log('create new candle (3, 7)')
-                                oPrevH4Candle = buildH4Candle(3, 7)
+                                oPrevH4Candle = buildH4Candle(4, 8)
                             case 11:
                                 console.log('create new candle (7, 11)')
-                                oPrevH4Candle = buildH4Candle(7, 11)
+                                oPrevH4Candle = buildH4Candle(8, 12)
                             case 15:
                                 console.log('create new candle (11, 15)')
-                                oPrevH4Candle = buildH4Candle(11, 15)
+                                oPrevH4Candle = buildH4Candle(12, 16)
                             case 19:
                                 console.log('create new candle (15, 19)')
-                                oPrevH4Candle = buildH4Candle(15, 19)
+                                oPrevH4Candle = buildH4Candle(16, 20)
                         }
                     }
                     //prev H4 candle high low check
@@ -125,6 +125,7 @@ async function main() {
                         console.log('prev H4 low grabbed')
                     }
                     if (utils.isEngulfing(oCrntM15Candle, oPrevM15Candle)) {
+                        console.log('M15 Engulfing')
                         const oM30Candle = {
                             high: Math.max(oCrntM15Candle.high, oPrevM15Candle.high),
                             low: Math.min(oCrntM15Candle.low, oPrevM15Candle.low),
@@ -156,6 +157,7 @@ async function main() {
         })
     })
 }
-main()
+// main()
+getCrntM15Candle()
 
 

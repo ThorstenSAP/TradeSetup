@@ -39,8 +39,7 @@ function readTickersFromCSV(filepath) {
 
 
 
-async function dailyCheck() {
-    //TODO adjust tickers
+async function dailyPrevWeekCheck() {
     const aTickers = await readTickersFromCSV('./EMAWeeklyAligned.csv');
     for (const sTicker of aTickers) {
         const aWeeklyData = await getChartData(sTicker, '1wk')
@@ -62,11 +61,11 @@ async function dailyCheck() {
                 now.getUTCFullYear(),
                 now.getUTCMonth(),
                 now.getUTCDate() - 1,
-                20, 30, 0, 0
+                21, 30, 0, 0
             ))
             const oPrevDay = utils.createCandle(aH1Data, yesterdayNYSEOpeningUTC, yesterdayNYSEClosingUTC)
 
-            if(utils.hasCandlegrabbedLows (oPrevWeekCandle, oPrevDay)){
+            if(utils.hasCandlegrabbedLows (oPrevDay, oPrevWeekCandle)){
                 console.log(sTicker)
             }
         }
@@ -74,7 +73,7 @@ async function dailyCheck() {
     }
 }
 
-async function intradayCheck(sCSVName) {
+async function intradayPrevWeekCheck(sCSVName) {
     const today = new Date()
     const aTickers = await readTickersFromCSV(`./${sCSVName}.csv`);
     for (const sTicker of aTickers) {
@@ -106,42 +105,42 @@ async function intradayCheck(sCSVName) {
                     console.log(`${sTicker} - H4`)
                 }
             } 
-            if ([17,19,21].includes(today.getHours())){
-                const beginHour =today.getHours() -3 
-                const crntHour = today.getHours() -1 
-                const oPrevCandle = utils.createCandle(aH1Data,
-                                    new Date(Date.UTC(
-                                        today.getUTCFullYear(),
-                                        today.getUTCMonth(),
-                                        today.getUTCDate(),
-                                        beginHour, 30, 0, 0
-                                    )),
-                                    new Date(Date.UTC(
-                                        today.getUTCFullYear(),
-                                        today.getUTCMonth(),
-                                        today.getUTCDate(),
-                                        crntHour, 30, 0, 0
-                                    )))
-                if(utils.hasCandlegrabbedLows (oPrevCandle, oPrevWeekCandle)){
-                    console.log(`${sTicker} - H2`)
-                }
-            }
+            // if ([17,19,21].includes(today.getHours())){
+            //     const beginHour =today.getHours() -3 
+            //     const crntHour = today.getHours() -1 
+            //     const oPrevCandle = utils.createCandle(aH1Data,
+            //                         new Date(Date.UTC(
+            //                             today.getUTCFullYear(),
+            //                             today.getUTCMonth(),
+            //                             today.getUTCDate(),
+            //                             beginHour, 30, 0, 0
+            //                         )),
+            //                         new Date(Date.UTC(
+            //                             today.getUTCFullYear(),
+            //                             today.getUTCMonth(),
+            //                             today.getUTCDate(),
+            //                             crntHour, 30, 0, 0
+            //                         )))
+            //     if(utils.hasCandlegrabbedLows (oPrevCandle, oPrevWeekCandle)){
+            //         console.log(`${sTicker} - H2`)
+            //     }
+            // }
 
-            const oPrevHour = aH1Data[aH1Data.length - 2]
-            if(utils.hasCandlegrabbedLows (oPrevHour, oPrevWeekCandle)){
-                console.log(sTicker)
-            }
+            // const oPrevHour = aH1Data[aH1Data.length - 2]
+            // if(utils.hasCandlegrabbedLows (oPrevHour, oPrevWeekCandle)){
+            //     console.log(sTicker)
+            // }
         }
 
     }
 }
-// intradayCheck('EMAWeeklyAligned')
+dailyPrevWeekCheck('EMAWeeklyAligned')
 
-cron.schedule('0 30 15-23 * * *', () => {
-  console.log('Running job at :30 every hour from 15:30 onward')
-    const today = new Date()
-    if(today.getHours() >= 15 && today.getHours() <= 21){
-        intradayCheck('EMAWeeklyAligned')
-    }
-  intradayCheck('EMAWeeklyAligned')
-});
+// cron.schedule('0 30 15-23 * * *', () => {
+//   console.log('Running job at :30 every hour from 15:30 onward')
+//     const today = new Date()
+//     if(today.getHours() >= 15 && today.getHours() <= 21){
+//         intradayPrevWeekCheck('EMAWeeklyAligned')
+//     }
+//   intradayPrevWeekCheck('EMAWeeklyAligned')
+// });

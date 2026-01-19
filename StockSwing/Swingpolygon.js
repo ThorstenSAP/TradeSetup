@@ -1,24 +1,48 @@
-const yahooFinance = require('yahoo-finance2').default;
-const { Utils } = require('../utils.js');
+import { getBars, getTicker } from "./polygon.mjs";
+import { Utils } from '../utils.js';
 const utils = new Utils()
 
-async function getChartData(ticker, sInterval) {
-  const now = new Date();
-  const startOfYear = new Date(now.getFullYear() -1, 0, 1)
-  try {
-    const result = await yahooFinance.chart(ticker, {
-      period1: Math.floor(startOfYear.getTime() / 1000),
-      period2: Math.floor(now.getTime() / 1000),
-      interval: sInterval
-    });
-    return result.quotes;
-  } catch (err) {
-    console.error(`Error fetching data for ${ticker}:`, err.message);
-    return null;
-  }
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+/**
+ * Fetch OHLCV bars from Polygon
+ * @param {string} symbol - e.g. "AAPL"
+ * @param {"minute"|"hour"|"day"|"week"} timespan
+ * @param {number} multiplier - e.g. 5 for 5-minute
+ * @param {string} from - YYYY-MM-DD
+ * @param {string} to - YYYY-MM-DD
+ */
+export async function getBars(
+    symbol,
+    timespan,
+    multiplier,
+    from,
+    to
+) {
+    const result = await rest.getStocksAggregates(
+        {
+            stocksTicker: symbol,
+            multiplier: multiplier,
+            timespan: timespan,
+            from: from,
+            to: to,
+            adjusted: false,
+            sort: "asc", //oldest first for calculations
+            limit: 50000
+        }
+    );
+    if (!result.results) return [];
+
+    return result.results.map(bar => ({
+        time: new Date(bar.t),
+        open: bar.o,
+        high: bar.h,
+        low: bar.l,
+        close: bar.c,
+        volume: bar.v
+    }));
 }
 
-function calculateDailyRVOL(candles, lookback = 10) {
+export async function calculateDailyRVOL(candles, lookback = 10) {
   return candles.map((candle, index) => {
     if (index < lookback) {
       return {
@@ -48,31 +72,6 @@ function calculateDailyRVOL(candles, lookback = 10) {
     };
   });
 }
-
-// function calculateBBWidth(candles, period = 20, stdDevMult = 2) {
-//   if (candles.length < period) return null;
-
-//   const closes = candles
-//     .slice(-period)
-//     .map(c => c.close)
-//     .filter(v => typeof v === "number");
-
-//   if (closes.length < period) return null;
-
-//   const mean =
-//     closes.reduce((sum, v) => sum + v, 0) / closes.length;
-
-//   const variance =
-//     closes.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) /
-//     closes.length;
-
-//   const stdDev = Math.sqrt(variance);
-
-//   const upper = mean + stdDevMult * stdDev;
-//   const lower = mean - stdDevMult * stdDev;
-
-//   return (upper - lower) / mean;
-// }
 function calculateBollingerBands(candles, period = 20, stdDevMult = 2) {
   if (candles.length < period) return null;
 
@@ -100,7 +99,7 @@ function calculateBollingerBands(candles, period = 20, stdDevMult = 2) {
 }
 
 
-function calculateRollingBBWidth(candles, period = 20, stdDevMult = 2) {
+export async function calculateRollingBBWidth(candles, period = 20, stdDevMult = 2) {
   // Clone candles to avoid side effects
   const enriched = candles.map(c => ({
     ...c,
@@ -124,7 +123,8 @@ function calculateRollingBBWidth(candles, period = 20, stdDevMult = 2) {
 
   return enriched;
 }
-function filterClosingBands(candles, thresholdPct = 1) {
+
+export async function filterClosingBands(candles, thresholdPct = 1) {
   const pct = thresholdPct / 100;
   const result = [];
 
@@ -156,7 +156,7 @@ function filterClosingBands(candles, thresholdPct = 1) {
 
   return result.reverse();
 }
-function isContextCandle(candle, prevCandle) {
+export async function isContextCandle(candle, prevCandle) {
   //TODO green candle on green candle
   //TODO Vol threshold of 0.1%
   if (utils.getDirectionOfCandle(candle) == 0) {
@@ -189,7 +189,7 @@ function isContextCandle(candle, prevCandle) {
     }
   }
 }
-function getContextCandles(candles) {
+export async function getContextCandles(candles) {
   let result = []
   candles.forEach((candle, index) => {
     index++
@@ -204,12 +204,8 @@ function getContextCandles(candles) {
   return result
 }
 
-
-
-
-
-
-async function main(sTimeframe) {
+export async function main(){
+    const today = new Date().toISOString().slice(0, 10) 
   let result = {
     RVol: [],
     TightBB: [],
@@ -222,14 +218,21 @@ async function main(sTimeframe) {
   let aContextCandles = []
   const aTickers = await utils.readTickersFromCSV('./general/TickersNasdaq100.csv');
   for (const sTicker of aTickers) {
-    const aData = await getChartData(sTicker, '1d')
+    const aData = await getBars(
+        sTicker,
+        "day",
+        "1",
+        "2025-01-01",
+        today
+    )
     if (aData) {
-      let aCandles = calculateDailyRVOL(aData, 10)
+      let aCandles = await calculateDailyRVOL(aData, 10)
       const aHighRVOLDays = aCandles.filter(c => c.rvol > 3)
-      aCandles = calculateRollingBBWidth(aCandles, 20)
+      aCandles = await calculateRollingBBWidth(aCandles, 20)
       const aTighBBWidth = aCandles.filter(c => c.bbw !== null && c.bbw < 5)
-      const aClosingBBBands = filterClosingBands(aCandles, 5)
-      aContextCandles = getContextCandles(aCandles).reverse()
+      const aClosingBBBands = await filterClosingBands(aCandles, 5)
+      aContextCandles = await getContextCandles(aCandles)//.reverse()
+      aContextCandles.reverse()
 
       if (aHighRVOLDays.length > 1) {
         aRVOL.push({
@@ -249,30 +252,34 @@ async function main(sTimeframe) {
           bbClosing: aClosingBBBands.reverse()
         })
       }
-      switch (sTimeframe) {
-        case 'daily':
-          if (aHighRVOLDays.length > 0 && aHighRVOLDays[0].date == aData[aData.length - 1].date) {
-            result.RVol.push({ ticker: sTicker, entry: aHighRVOLDays[0] })
-          }
-          if (aTighBBWidth.length > 0 && aTighBBWidth[0].date == aData[aData.length - 1].date) {
-            result.TightBB.push({ ticker: sTicker, entry: aTighBBWidth[0] })
 
-          }
-          if (aClosingBBBands.length > 0 && aClosingBBBands[0].date == aData[aData.length - 1].date) {
-            result.BBClosing.push({ ticker: sTicker, entry: aClosingBBBands[0] })
+        if (aHighRVOLDays.length > 0 && aHighRVOLDays[0].time == aData[aData.length - 1].time) {
+        result.RVol.push({ ticker: sTicker, entry: aHighRVOLDays[0] })
+        }
+        if (aTighBBWidth.length > 0 && aTighBBWidth[0].time == aData[aData.length - 1].time) {
+        result.TightBB.push({ ticker: sTicker, entry: aTighBBWidth[0] })
 
-          }
-          if (aContextCandles.length > 0 && aContextCandles[0].date == aData[aData.length - 1].date) {
-            result.CC.push({ ticker: sTicker, entry: aContextCandles[0] })
+        }
+        if (aClosingBBBands.length > 0 && aClosingBBBands[0].time == aData[aData.length - 1].time) {
+        result.BBClosing.push({ ticker: sTicker, entry: aClosingBBBands[0] })
 
-          }
-          break;
-
-        default:
-          break;
-      }
+        }
+        if (aContextCandles.length > 0 && aContextCandles[0].time == aData[aData.length - 1].time) {
+        result.CC.push({ ticker: sTicker, entry: aContextCandles[0] })
+        }
     }
-  }
-  debugger
+
+
+
+    }
+    debugger
 }
-main('daily')
+
+main()
+// const daily = await getBars(
+//     "AAPL",
+//     "day",
+//     "1",
+//     "2025-01-01",
+//     "2026-01-10"
+// );

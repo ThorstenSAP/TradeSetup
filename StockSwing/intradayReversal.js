@@ -1,0 +1,1 @@
+//check list of consolidations for a possible entry at the lows of the prev day
