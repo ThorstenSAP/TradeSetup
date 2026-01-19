@@ -50,7 +50,7 @@ export async function main() {
         continue; // skip this ticker, keep looping
       }
 
-      let aCandles = utils.calculateDailyRVOL(aData, 10)
+      let aCandles = utils.calculateRVOL(aData, 10)
       aCandles = utils.calculateRollingBBWidth(aCandles, 20)
       aCandles = utils.rollingAvgBBW(aCandles, 20)
       const iBBWLookbackPeriod = 20

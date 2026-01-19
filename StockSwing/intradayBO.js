@@ -1,58 +1,60 @@
-import { getBars, getTicker } from "./polygon.mjs";
+import { getBars } from "./polygon.mjs";
 import { Utils } from '../utils.js';
+import cron from "node-cron"
 const utils = new Utils()
 
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-/**
- * Fetch OHLCV bars from Polygon
- * @param {string} symbol - e.g. "AAPL"
- * @param {"minute"|"hour"|"day"|"week"} timespan
- * @param {number} multiplier - e.g. 5 for 5-minute
- * @param {string} from - YYYY-MM-DD
- * @param {string} to - YYYY-MM-DD
- */
-export async function getBars(
-    symbol,
-    timespan,
-    multiplier,
-    from,
-    to
-) {
-    const result = await rest.getStocksAggregates(
-        {
-            stocksTicker: symbol,
-            multiplier: multiplier,
-            timespan: timespan,
-            from: from,
-            to: to,
-            adjusted: false,
-            sort: "asc", //oldest first for calculations
-            limit: 50000
-        }
-    );
-    if (!result.results) return [];
 
-    return result.results.map(bar => ({
-        time: new Date(bar.t),
-        open: bar.o,
-        high: bar.h,
-        low: bar.l,
-        close: bar.c,
-        volume: bar.v
-    }));
-}
-export async function main(){
-  const aTickers = await utils.readTickersFromCSV('./general/TickersNasdaq100.csv');
-  for (const sTicker of aTickers) {
-    const aData = await getBars(
-        'AAPL', //sTicker,
-        "minute",
-        "5",
-        1768573800000, //https://currentmillis.com/
-        new Date(Date.now() + 86400000).toISOString().slice(0, 10)
-    )
-    debugger
+export async function checkBO(sMinute) {
+    const aTickers = await utils.readTickersFromCSV('./Momentum.csv')
+    // const aTickers = await utils.readTickersFromCSV('./general/TickersNasdaq100.csv')
+    for (const sTicker of aTickers) {
+        const aData = await getBars(
+            sTicker,
+            "minute",
+            sMinute,
+            new Date(Date.now()).toISOString().slice(0, 10), //1768573800000,
+            new Date(Date.now() + 86400000).toISOString().slice(0, 10)
+        )
+        let aCandles = utils.calculateRVOL(aData, 10)
+        const oCandle = aCandles[aCandles.length - 1]
+        const oPrevCandle = aCandles[aCandles.length - 2]
+        const oPrevPrevCandle = aCandles[aCandles.length - 3]
+        
+        //possibilities
+        if(oCandle.open > oPrevCandle.close && utils.isStrongPush(oCandle)){
+            //gap and go with demand candle
+            utils.ntfyMe(`intradayBOMomentum`, sTicker)
+        } else if(utils.isEngulfing(oCandle, oPrevCandle)){
+            utils.ntfyMe(`intradayBOMomentum`, sTicker)
+        } else if(utils.hasCandlegrabbedLows(oCandle, oPrevCandle)){
+            utils.ntfyMe(`intradayBOMomentum`, sTicker)
+        } else if(utils.isLiquidation(oCandle, oPrevCandle, oPrevPrevCandle)){
+            utils.ntfyMe(`intradayBOMomentum`, sTicker)
+        } else if(utils.isEveMorningStar(oCandle, oPrevCandle, oPrevPrevCandle)){
+            utils.ntfyMe(`intradayBOMomentum`, sTicker)
+        }
+        
     }
 }
+export async function main() {
+    //M2 BO CHECK
+    cron.schedule("32 15 * * *", () => {
+        checkBO("2")
+        console.log("Job A running at 15:32");
+    })
+
+    cron.schedule("30-59/5 15 * * *", () => {
+        checkBO("5")
+        console.log("Job B running (15:30–15:59)");
+    });
+
+    // 16:00–20:59
+    cron.schedule("*/5 16-20 * * *", () => {
+        checkBO("5")
+        console.log("Job B running (16:00–20:59)");
+    })
+}
+// checkBO("2")
 main()

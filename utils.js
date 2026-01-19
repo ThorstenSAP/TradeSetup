@@ -3,19 +3,19 @@ const fs = require('fs')
 const axios = require('axios')
 
 const XLSX = require('xlsx')
-const RSI = require('calc-rsi') 
+const RSI = require('calc-rsi')
 const csv = require('csv-parser');
 
-class Utils{
-    constructor(sNtfyTopic){
+class Utils {
+    constructor(sNtfyTopic) {
         this.sNtfyTopic = sNtfyTopic
-        
+
     }
-    convertMiliseconds(sMiliseconds){
+    convertMiliseconds(sMiliseconds) {
         let date = new Date(parseInt(sMiliseconds))
         return date.toLocaleString('de')
     }
-    getMidnightMilisecondsMinusXDays(iDay){
+    getMidnightMilisecondsMinusXDays(iDay) {
         let now = new Date()
         now.setHours(0, 0, 0, 0)
         // now.setDate(now - iDay)
@@ -24,13 +24,13 @@ class Utils{
     }
 
     //aData = array with objects
-     saveArrayToCSV(aSymbols, sFileName){
-         const csvString = ['symbol', ...aSymbols].join('\n')
-         const writeStream = fs.createWriteStream(`${sFileName}.csv`);
-         writeStream.write(csvString);
-         writeStream.end()
+    saveArrayToCSV(aSymbols, sFileName) {
+        const csvString = ['symbol', ...aSymbols].join('\n')
+        const writeStream = fs.createWriteStream(`${sFileName}.csv`);
+        writeStream.write(csvString);
+        writeStream.end()
     }
-    saveArrayToXlsx(aDataObjects){
+    saveArrayToXlsx(aDataObjects) {
         var ws = XLSX.utils.json_to_sheet(aDataObjects);
         /* create workbook and export */
         var wb = XLSX.utils.book_new();
@@ -38,16 +38,16 @@ class Utils{
         XLSX.writeFile(wb, "test.xlsx");
     }
 
-    getDirectionOfCandle(oCandle){
-        if(oCandle.open < oCandle.close){
+    getDirectionOfCandle(oCandle) {
+        if (oCandle.open < oCandle.close) {
             return 0 //bullish
         } else {
             return 1 //bearish
         }
     }
 
-    getTrendThresholds(oCandle){
-        if(this.getDirectionOfCandle(oCandle) == 0){
+    getTrendThresholds(oCandle) {
+        if (this.getDirectionOfCandle(oCandle) == 0) {
             return {
                 fAbsHigh: oCandle.high,
                 fTrendThreshold: oCandle.low
@@ -60,15 +60,15 @@ class Utils{
         }
     }
     //Liquidation bull case
-    getUpperThreshold(value1, value2){
-        if(value1 > value2){
+    getUpperThreshold(value1, value2) {
+        if (value1 > value2) {
             return value1
         } else {
             return value2
         }
     }
-    getBullLiquidationBoxStop(value1, value2){
-        if (value1 < value2){
+    getBullLiquidationBoxStop(value1, value2) {
+        if (value1 < value2) {
             return value1
         } else {
             return value2
@@ -76,15 +76,15 @@ class Utils{
     }
 
     //Liq bear case
-    getLowerThreshold(value1, value2){
-        if(value1 < value2){
+    getLowerThreshold(value1, value2) {
+        if (value1 < value2) {
             return value1
         } else {
             return value2
         }
     }
-    getBearLiquidationBoxStop(value1, value2){
-        if (value1 > value2){
+    getBearLiquidationBoxStop(value1, value2) {
+        if (value1 > value2) {
             return value1
         } else {
             return value2
@@ -92,48 +92,47 @@ class Utils{
     }
 
     //if the candle is an inside candle return the index of the corresponding surrounding candle
-    isInsideCandle(index, aData, offSet){
+    isInsideCandle(index, aData, offSet) {
         let step = 2 //do not check the engulfed candle. Check the candle prior the engulfing
         offSet = offSet + step
         while (index > 0 && index - step > 0 && step <= offSet) {
             //check prev candle if body is in range of a previous candle (with high low)
             //if so it is an inside candle
-            if(aData[index-step].low < aData[index].low && aData[index-step].low > aData[index].low ){
+            if (aData[index - step].low < aData[index].low && aData[index - step].low > aData[index].low) {
                 //&& aData[index-step].low < aData[index].close && aData[index].close < aData[index-step].high){
                 //if(this.getDirectionOfCandle(aData[index]) !== this.getDirectionOfCandle(aData[index-step])){
-                    //only consider inside candles when there are in opposite directions
-                    return index-step
+                //only consider inside candles when there are in opposite directions
+                return index - step
                 //}
             }
-            
+
             step += 1
         }
         return -1
     }
-    isInsideOutFormation(oCandle, oPrevCandle, oPrevPrevCandle){
-        if(!this.isBodyCandle(oPrevPrevCandle) || !this.isBodyCandle(oCandle)){
+    isInsideOutFormation(oCandle, oPrevCandle, oPrevPrevCandle) {
+        if (!this.isBodyCandle(oPrevPrevCandle) || !this.isBodyCandle(oCandle)) {
             return false
         } else {
-            if(!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) &&
-                !this.isCandleInsidePrevCandleRange(oCandle, oPrevPrevCandle) && 
-                this.isCandleInsidePrevCandleRange(oPrevCandle, oPrevPrevCandle))
-            {
+            if (!this.isCandleInsidePrevCandleRange(oCandle, oPrevCandle) &&
+                !this.isCandleInsidePrevCandleRange(oCandle, oPrevPrevCandle) &&
+                this.isCandleInsidePrevCandleRange(oPrevCandle, oPrevPrevCandle)) {
                 return true
             } else {
                 return false
             }
         }
     }
-    isWyckoff(oCandle, index, aData){
+    isWyckoff(oCandle, index, aData) {
         //at least 3 candles taken out
-        if(!this.isBodyCandle(oCandle)){
+        if (!this.isBodyCandle(oCandle)) {
             return false
         } else {
             let i = 1
-            while (index - i >= 0 && this.isEngulfing(oCandle, aData[index - i]) ){
+            while (index - i >= 0 && this.isEngulfing(oCandle, aData[index - i])) {
                 i++
             }
-            if(i >= 4){ //at least 3 candles engulfed
+            if (i >= 4) { //at least 3 candles engulfed
                 return true
             } else {
                 return false
@@ -141,22 +140,22 @@ class Utils{
         }
     }
     //check with high grab and engulfing...
-    isMCCandle(oCandle, oPrevCandle){
-        
-        if(this.getDirectionOfCandle(oCandle) == 0){
-            if(oCandle.low < oPrevCandle.low && oCandle.close > oPrevCandle.close){
+    isMCCandle(oCandle, oPrevCandle) {
+
+        if (this.getDirectionOfCandle(oCandle) == 0) {
+            if (oCandle.low < oPrevCandle.low && oCandle.close > oPrevCandle.close) {
                 return true
             } else {
                 return false
             }
         } else {
             //bear MC
-                //prev bearish candle
-                if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.close){
-                    return true
-                } else {
-                    return false
-                }
+            //prev bearish candle
+            if (oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.close) {
+                return true
+            } else {
+                return false
+            }
             // if(this.getDirectionOfCandle(oPrevCandle) == 0){
             //     //prev bullish candle
             //     if(oCandle.high > oPrevCandle.high && oCandle.close < oPrevCandle.open){
@@ -175,16 +174,16 @@ class Utils{
             // }
         }
     }
-    isLiquidation(oCandle, oPrevCandle, oPrevPrevCandle){
-        if(this.getDirectionOfCandle(oCandle) == 0){
+    isLiquidation(oCandle, oPrevCandle, oPrevPrevCandle) {
+        if (this.getDirectionOfCandle(oCandle) == 0) {
             //bull candle, therfore downtrend before
-            if(oCandle.close > oPrevPrevCandle.close && oPrevCandle.close < oPrevPrevCandle.low){
+            if (oCandle.close > oPrevPrevCandle.close && oPrevCandle.close < oPrevPrevCandle.low) {
                 return true
             } else {
                 return false
             }
         } else {
-            if(oCandle.close < oPrevPrevCandle.close && oPrevCandle.close > oPrevPrevCandle.high){
+            if (oCandle.close < oPrevPrevCandle.close && oPrevCandle.close > oPrevPrevCandle.high) {
                 return true
             } else {
                 return false
@@ -192,28 +191,28 @@ class Utils{
 
         }
     }
-    isUFormation(oCandle, index, aData){
+    isUFormation(oCandle, index, aData) {
         //strong push
         //a few dojis / weak candles
         //strong push
-        
-        if(this.isStrongPush(oCandle)){
+
+        if (this.isStrongPush(oCandle)) {
 
         }
     }
-    isCandleInsidePrevCandleRange(oCandle, oPrevCandle){
+    isCandleInsidePrevCandleRange(oCandle, oPrevCandle) {
         //returns true for yes (isInside), false for no (isOutside)
         //close outside
-        if(this.getDirectionOfCandle(oCandle) == 0){
+        if (this.getDirectionOfCandle(oCandle) == 0) {
             //bullish candle
-            if(oCandle.close > oPrevCandle.high || oCandle.high > oPrevCandle.high || oCandle.low < oPrevCandle.low){
+            if (oCandle.close > oPrevCandle.high || oCandle.high > oPrevCandle.high || oCandle.low < oPrevCandle.low) {
                 return false //range expanded 
             } else {
                 return true //did close within the higgh of the prev candle
             }
         } else {
             //bearish candle
-            if(oCandle.close < oPrevCandle.low || oCandle.low < oPrevCandle.low || oCandle.high > oPrevCandle.high){
+            if (oCandle.close < oPrevCandle.low || oCandle.low < oPrevCandle.low || oCandle.high > oPrevCandle.high) {
                 return false //range expanded
             } else {
                 return true //did close within the low of the prev candle
@@ -221,14 +220,14 @@ class Utils{
 
         }
     }
-    isEveMorningStar(oCandle, oPrevCandle, oPrevPrevCandle){
-        if(!this.isBodyCandle(oCandle) || !this.isBodyCandle(oPrevPrevCandle)){
+    isEveMorningStar(oCandle, oPrevCandle, oPrevPrevCandle) {
+        if (!this.isBodyCandle(oCandle) || !this.isBodyCandle(oPrevPrevCandle)) {
             return false
         } else {
-            if(this.getDirectionOfCandle(oCandle) === 0){
+            if (this.getDirectionOfCandle(oCandle) === 0) {
                 //bullish candle
                 //when the candles is not a body candle (body >= 0.5% of range) it is ok for EveMorningStar
-                if(!this.isBodyCandle(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 1)){
+                if (!this.isBodyCandle(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 1)) {
                     return true
                 } else {
                     return false
@@ -236,7 +235,7 @@ class Utils{
             } else {
                 //bearish case
                 //when the candles is not a body candle (body >= 0.5% of range) it is ok for EveMorningStar
-                if(!this.isBodyCandle(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 0)){
+                if (!this.isBodyCandle(oPrevCandle) && (this.isBodyCandle(oPrevPrevCandle) && this.getDirectionOfCandle(oPrevPrevCandle) === 0)) {
                     return true
                 } else {
                     return false
@@ -244,19 +243,56 @@ class Utils{
             }
         }
     }
-    isStrongPush(oCandle){
+    calculateRVOL(candles, lookback = 10) {
+        return candles.map((candle, index) => {
+            if (index < lookback) {
+                return {
+                    ...candle,
+                    rvol: null // not enough history yet
+                };
+            }
+
+            const pastVolumes = candles
+                .slice(index - lookback, index)
+                .map(c => c.volume)
+                .filter(v => v > 0);
+
+            if (pastVolumes.length === 0) {
+                return {
+                    ...candle,
+                    rvol: null
+                };
+            }
+
+            const avgVolume =
+                pastVolumes.reduce((sum, v) => sum + v, 0) / pastVolumes.length;
+
+            return {
+                ...candle,
+                rvol: candle.volume / avgVolume
+            };
+        });
+    }
+    isInsideBar(oCandle, oPrevCandle) {
+        if (oCandle.high <= oPrevCandle.high && oCandle.low >= oPrevCandle.low) {
+            return true
+        } else {
+            return false
+        }
+    }
+    isStrongPush(oCandle) {
         let fBody, fCandle
-        if(this.getDirectionOfCandle(oCandle) === 0){
+        if (this.getDirectionOfCandle(oCandle) === 0) {
             fBody = oCandle.close - oCandle.open
             fCandle = oCandle.high - oCandle.low
-            
+
         } else {
             fBody = oCandle.open - oCandle.close
             fCandle = oCandle.low - oCandle.high
 
         }
-        
-        if(fBody/fCandle <= -0.75 || fBody/fCandle >= 0.75){
+
+        if (fBody / fCandle <= -0.75 || fBody / fCandle >= 0.75) {
             return true
         } else {
             return false
@@ -264,38 +300,38 @@ class Utils{
 
     }
 
-    isBodyCandle(oCandle){
+    isBodyCandle(oCandle) {
         let fBody, fCandle
-        if(this.getDirectionOfCandle(oCandle) === 0){
+        if (this.getDirectionOfCandle(oCandle) === 0) {
             fBody = oCandle.close - oCandle.open
             fCandle = oCandle.high - oCandle.low
-            
+
         } else {
             fBody = oCandle.open - oCandle.close
             fCandle = oCandle.low - oCandle.high
 
         }
-        
-        if(fBody/fCandle <= -0.5 || fBody/fCandle >= 0.5){
+
+        if (fBody / fCandle <= -0.5 || fBody / fCandle >= 0.5) {
             return true
         } else {
             return false
         }
     }
 
-    isCandleDoji(oCandle){
+    isCandleDoji(oCandle) {
         let fBody, fCandle
-        if(this.getDirectionOfCandle(oCandle) === 0){
+        if (this.getDirectionOfCandle(oCandle) === 0) {
             fBody = oCandle.close - oCandle.open
             fCandle = oCandle.high - oCandle.low
-            
+
         } else {
             fBody = oCandle.open - oCandle.close
             fCandle = oCandle.low - oCandle.high
 
         }
-        
-        if(-0.37 <= fBody/fCandle && fBody/fCandle <= 0.37){
+
+        if (-0.37 <= fBody / fCandle && fBody / fCandle <= 0.37) {
             return true
         } else {
             return false
@@ -303,32 +339,32 @@ class Utils{
     }
 
 
-    isEngulfing(oCandle, oPrevCandle){
-            if(!this.isBodyCandle(oCandle)){
-                return false
-            } else {
-                if(this.getDirectionOfCandle(oPrevCandle) === 0 && this.getDirectionOfCandle(oCandle) === 0){
-                    //prev candle was bullish. Hence, look for bearish engulfing
-                    if(oCandle.open <= oPrevCandle.open && oCandle.close >= oPrevCandle.close){
-                        return true //bearish engulfing
-                    }
-                } else if(this.getDirectionOfCandle(oPrevCandle) == 1 && this.getDirectionOfCandle(oCandle) == 1){
-                    if(oCandle.open >= oPrevCandle.open && oCandle.close <= oPrevCandle.close){
-                        return true //bullish engulfing
-                    }
-                } else if(this.getDirectionOfCandle(oPrevCandle) == 1 && this.getDirectionOfCandle(oCandle) == 0){
-                    //bull engulfing of bear candle
-                    if(oCandle.close >= oPrevCandle.open && oCandle.open <= oPrevCandle.open){
-                        return true //bullish engulfing
-                    }
-                } else if(this.getDirectionOfCandle(oPrevCandle) == 0 && this.getDirectionOfCandle(oCandle) == 1){
-                    //bear engulfing of bull candle
-                    if(oCandle.open >= oPrevCandle.close && oCandle.close <= oPrevCandle.open){
-                        return true //bullish engulfing
-                    }
+    isEngulfing(oCandle, oPrevCandle) {
+        if (!this.isBodyCandle(oCandle)) {
+            return false
+        } else {
+            if (this.getDirectionOfCandle(oPrevCandle) === 0 && this.getDirectionOfCandle(oCandle) === 0) {
+                //prev candle was bullish. Hence, look for bearish engulfing
+                if (oCandle.open <= oPrevCandle.open && oCandle.close >= oPrevCandle.close) {
+                    return true //bearish engulfing
+                }
+            } else if (this.getDirectionOfCandle(oPrevCandle) == 1 && this.getDirectionOfCandle(oCandle) == 1) {
+                if (oCandle.open >= oPrevCandle.open && oCandle.close <= oPrevCandle.close) {
+                    return true //bullish engulfing
+                }
+            } else if (this.getDirectionOfCandle(oPrevCandle) == 1 && this.getDirectionOfCandle(oCandle) == 0) {
+                //bull engulfing of bear candle
+                if (oCandle.close >= oPrevCandle.open && oCandle.open <= oPrevCandle.open) {
+                    return true //bullish engulfing
+                }
+            } else if (this.getDirectionOfCandle(oPrevCandle) == 0 && this.getDirectionOfCandle(oCandle) == 1) {
+                //bear engulfing of bull candle
+                if (oCandle.open >= oPrevCandle.close && oCandle.close <= oPrevCandle.open) {
+                    return true //bullish engulfing
                 }
             }
-            return false
+        }
+        return false
 
     }
     // isEngulfing(aCandles){
@@ -350,42 +386,42 @@ class Utils{
     //     }
     // }
 
-    isCloudCover(aCandles){
+    isCloudCover(aCandles) {
         const oLastCandle = aCandles[aCandles.length - 2] //prev candel
         const oPrevCandle = aCandles[aCandles.length - 3] //two candle back
-        if(!this.isBodyCandle(oLastCandle)){
+        if (!this.isBodyCandle(oLastCandle)) {
             return false
         } else {
-            if(this.getDirectionOfCandle(oLastCandle) === 0){
+            if (this.getDirectionOfCandle(oLastCandle) === 0) {
                 //bull case
-                if (oLastCandle.open > oPrevCandle.close && oLastCandle.close > oPrevCandle.open){ //red candle followed by green
+                if (oLastCandle.open > oPrevCandle.close && oLastCandle.close > oPrevCandle.open) { //red candle followed by green
                     return true
-                } else  if (oLastCandle.open > oPrevCandle.open && oLastCandle.close > oPrevCandle.close){ //green on green 
+                } else if (oLastCandle.open > oPrevCandle.open && oLastCandle.close > oPrevCandle.close) { //green on green 
                     return true
                 }
             } else {
                 //bear case
-                if (oLastCandle.open <= oPrevCandle.close && oLastCandle.close < oPrevCandle.open){ //green candle followed by red candle
+                if (oLastCandle.open <= oPrevCandle.close && oLastCandle.close < oPrevCandle.open) { //green candle followed by red candle
                     return true
-                } else  if (oLastCandle.open < oPrevCandle.open && oLastCandle.close < oPrevCandle.close){ //red on red
+                } else if (oLastCandle.open < oPrevCandle.open && oLastCandle.close < oPrevCandle.close) { //red on red
                     return true
                 }
             }
         }
-        
+
     }
-    hasCandlegrabbedHighs(oCandle, oPrevCandle){
-        if(oCandle && oPrevCandle){
-            if(oCandle.high >= oPrevCandle.high && oCandle.close < oPrevCandle.high){
+    hasCandlegrabbedHighs(oCandle, oPrevCandle) {
+        if (oCandle && oPrevCandle) {
+            if (oCandle.high >= oPrevCandle.high && oCandle.close < oPrevCandle.high) {
                 return true
             } else {
                 return false
             }
         }
     }
-    hasCandlegrabbedLows(oCandle, oPrevCandle){
-        if(oCandle && oPrevCandle){
-            if(oCandle.low <= oPrevCandle.low && oCandle.close > oPrevCandle.low){
+    hasCandlegrabbedLows(oCandle, oPrevCandle) {
+        if (oCandle && oPrevCandle) {
+            if (oCandle.low <= oPrevCandle.low && oCandle.close > oPrevCandle.low) {
                 return true
             } else {
                 return false
@@ -397,19 +433,17 @@ class Utils{
 
 
 
-    didCandleTouchFVG(oFVG, oCandle){
-        if(oFVG.iDirection == 0){
-            if(oCandle.close > oFVG.fRangeLow && 
-                (oCandle.close < oFVG.fRangeHigh || oCandle.open < oFVG.fRangeHigh || oCandle.high < oFVG.fRangeHigh))                   
-            { 
+    didCandleTouchFVG(oFVG, oCandle) {
+        if (oFVG.iDirection == 0) {
+            if (oCandle.close > oFVG.fRangeLow &&
+                (oCandle.close < oFVG.fRangeHigh || oCandle.open < oFVG.fRangeHigh || oCandle.high < oFVG.fRangeHigh)) {
                 return true
             }
         } else {
             //bearish candle
-            
-            if(oCandle.close < oFVG.fRangeHigh && 
-                (oCandle.close > oFVG.fRangeLow || oCandle.open > oFVG.fRangeLow || oCandle.high > oFVG.fRangeLow))                   
-            { 
+
+            if (oCandle.close < oFVG.fRangeHigh &&
+                (oCandle.close > oFVG.fRangeLow || oCandle.open > oFVG.fRangeLow || oCandle.high > oFVG.fRangeLow)) {
                 return true
             }
         }
@@ -420,59 +454,66 @@ class Utils{
 
     }
 
-    convertApiResponseForRsiCalc(aData){
+    convertApiResponseForRsiCalc(aData) {
         const aPrevClose = []
-        for (let i = aData.length -1; i >= 0; i--) {
+        for (let i = aData.length - 1; i >= 0; i--) {
             aPrevClose.push(aData[i].close)
             // for (let j = i-1; j >= 0; j--) {
             // } 
         }
         return aPrevClose
     }
-    copyClosingPricesFromData(aData){
+    copyTickersFromListForExport(aData) {
+        let aTickers = []
+        for (const oCandle of aData) {
+            aTickers.push(oCandle.ticker)
+        }
+        return aTickers
+    }
+    copyClosingPricesFromData(aData) {
         let aClosingPrices = []
         for (const oCandle of aData) {
             aClosingPrices.push(oCandle.close)
         }
         return aClosingPrices
     }
-    setRsi(aData){
+    setRsi(aData) {
         const rsi = new RSI(this.convertApiResponseForRsiCalc(aData), 14)
         rsi.calculate((err, data) => {
             if (err) {
                 done(err);
-            } else if(data.length > 0) {
-                for (let i = aData.length -1; i >= 0; i--) {
+            } else if (data.length > 0) {
+                for (let i = aData.length - 1; i >= 0; i--) {
                     const oLastElement = data.pop()
-                    if(oLastElement.rsi){
+                    if (oLastElement.rsi) {
                         aData[i].rsi = oLastElement.rsi
                     } else {
                         aData[i].rsi = null
                     }
                 }
-                
+
             }
         })
     }
-    getDelta(int1, int2){
-        if(int1 > int2){
+    getDelta(int1, int2) {
+        if (int1 > int2) {
             return int1 - int2
         } else {
             return int2 - int1
         }
     }
 
-    isOneOfLatestCandles(sTimestring){
+    isOneOfLatestCandles(sTimestring) {
         const date = new Date()
         const iCrntDay = new Date().getDate()
         const iCrntHour = date.getHours() //+2 //server time are in utc
-        const iCandleDay = parseInt(sTimestring.slice(0,2))
-        const iCandleHour = parseInt(sTimestring.split(', ')[1].slice(0,2))
+        const iCandleDay = parseInt(sTimestring.slice(0, 2))
+        const iCandleHour = parseInt(sTimestring.split(', ')[1].slice(0, 2))
 
-        if(iCrntDay == iCandleDay && this.getDelta(iCrntHour, iCandleHour) == 0){
+        if (iCrntDay == iCandleDay && this.getDelta(iCrntHour, iCandleHour) == 0) {
             //same day and it happend in the last two hours
             return true
-        } 
+        }
         // else if(iCrntHour <= 8){
         //     if((iCandleDay == iCrntDay - 1 && iCandleHour >= 20) || (iCandleDay == iCrntDay && iCandleHour <= 8)){
         //         //the engulfing occured between yesterday 20.00pm and today 08.00 am
@@ -485,19 +526,19 @@ class Utils{
 
     }
 
-    setSma(aData, iSma){
+    setSma(aData, iSma) {
         let iSum = 0
         for (let index = 0; index <= iSma; index++) {
-            let iIndex = (aData.length -1) - index //latest element minus the last index
+            let iIndex = (aData.length - 1) - index //latest element minus the last index
 
             iSum = iSum + aData[iIndex].close
         }
-        aData[aData.length-1][`sma${iSma}`] = iSum/iSma
+        aData[aData.length - 1][`sma${iSma}`] = iSum / iSma
     }
 
 
-    createArrayOfClosingPrices(aData){
-        let result =[]
+    createArrayOfClosingPrices(aData) {
+        let result = []
         for (const candle of aData) {
             result.push(candle.close)
         }
@@ -520,39 +561,39 @@ class Utils{
     //     const fastEMA = this.calculateEMA(closingPrices, fastLength);
     //     const slowEMA = this.calculateEMA(closingPrices, slowLength);
     //     const macd = fastEMA - slowEMA;
-        
+
     //     return macd;
     // }
-    isMACDBelow0Line(oMACD){
-        if(oMACD.macdLine[oMACD.macdLine.length -1] < 0 && oMACD.signalLine[oMACD.signalLine.length -1] < 0 ){
+    isMACDBelow0Line(oMACD) {
+        if (oMACD.macdLine[oMACD.macdLine.length - 1] < 0 && oMACD.signalLine[oMACD.signalLine.length - 1] < 0) {
             return true
         } else {
             return false
         }
     }
-    getMACDSignal(macd, signal){
-        if(macd > signal ){
+    getMACDSignal(macd, signal) {
+        if (macd > signal) {
             return 1 //Buy
         } else {
             return -1 //Sell
         }
     }
-    hasMACDFlipped(oMACD){
-        if(this.getMACDSignal(oMACD.macdLine[oMACD.macdLine.length -1], oMACD.signalLine[oMACD.signalLine.length -1]) != this.getMACDSignal(oMACD.macdLine[oMACD.macdLine.length -2], oMACD.signalLine[oMACD.signalLine.length -2])){
+    hasMACDFlipped(oMACD) {
+        if (this.getMACDSignal(oMACD.macdLine[oMACD.macdLine.length - 1], oMACD.signalLine[oMACD.signalLine.length - 1]) != this.getMACDSignal(oMACD.macdLine[oMACD.macdLine.length - 2], oMACD.signalLine[oMACD.signalLine.length - 2])) {
             return true
         } else {
             return false
         }
     }
-    
+
     calculateMACD(closingPrices, fastLength, slowLength) {
         const ema12 = this.calculateEMAArray(closingPrices, fastLength);
         const ema26 = this.calculateEMAArray(closingPrices, slowLength);
 
         const macdLine = closingPrices.map((_, i) =>
             ema12[i] !== undefined && ema26[i] !== undefined
-            ? ema12[i] - ema26[i]
-            : undefined
+                ? ema12[i] - ema26[i]
+                : undefined
         );
 
         const validMACD = macdLine.filter((v) => v !== undefined);
@@ -598,53 +639,184 @@ class Utils{
         const k = 2 / (period + 1);
         let ema = closingPrices[0];
         for (let i = 1; i < closingPrices.length; i++) {
-          ema = (closingPrices[i] * k) + (ema * (1 - k));
+            ema = (closingPrices[i] * k) + (ema * (1 - k));
         }
-      
+
         return ema;
+    }
+    checkEMAStacked(aData, direction, ...emaLengths) {
+        if (emaLengths.length < 2) {
+            throw new Error("At least two EMA lengths are required");
+        }
+
+        const closes = this.copyClosingPricesFromData(aData);
+
+        const emas = emaLengths.map(len =>
+            this.calculateEMA(closes, len)
+        );
+
+        if (direction === "bull") {
+            return emas.every((v, i) => i === 0 || emas[i - 1] >= v);
+        } else {
+            return emas.every((v, i) => i === 0 || emas[i - 1] <= v);
+        }
+    }
+    calculateEMASlope(aData, iLength) {
+        const aClosingPrices = this.copyClosingPricesFromData(aData)
+        const crntDay = this.calculateEMA(aClosingPrices, iLength)
+        const prevDay = this.calculateEMA(aClosingPrices.slice(0, -1), iLength)
+
+        return ((crntDay / prevDay) - 1) * 100
+    }
+    getMarketCap(marketCap) {
+        if (marketCap < 300e6) return "micro";
+        if (marketCap < 2e9) return "small";
+        if (marketCap < 10e9) return "mid";
+        if (marketCap < 200e9) return "large";
+        return "mega";
     }
 
     readTickersFromCSV(filepath) {
-      return new Promise((resolve, reject) => {
-        const tickers = [];
-        fs.createReadStream(filepath)
-          .pipe(csv())
-          .on('data', (row) => {
-            if (row.symbol) tickers.push(row.symbol.trim());
-          })
-          .on('end', () => {
-            resolve(tickers);
-          })
-          .on('error', reject);
-      });
+        return new Promise((resolve, reject) => {
+            const tickers = [];
+            fs.createReadStream(filepath)
+                .pipe(csv())
+                .on('data', (row) => {
+                    if (row.symbol) tickers.push(row.symbol.trim());
+                })
+                .on('end', () => {
+                    resolve(tickers);
+                })
+                .on('error', reject);
+        });
     }
-    
 
-    ntfyMe(topic, msg){
-        return new Promise((res,rej) => {
-            if(typeof msg === 'object'){
+    calculateBollingerBands(candles, period = 20, stdDevMult = 2) {
+        if (candles.length < period) return null;
+
+        // Use ONLY the last `period` closes
+        const closes = candles
+            .slice(-period)
+            .map(c => Number(c.close));
+
+        // Mean (SMA)
+        const mean =
+            closes.reduce((sum, v) => sum + v, 0) / period;
+
+        // Sample variance (N - 1)
+        const variance =
+            closes.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) /
+            (period - 1);
+
+        const stdDev = Math.sqrt(variance);
+
+        return {
+            mean,
+            upper: mean + stdDevMult * stdDev,
+            lower: mean - stdDevMult * stdDev
+        };
+    }
+
+
+    calculateRollingBBWidth(candles, period = 20, stdDevMult = 2) {
+        // Clone candles to avoid side effects
+        const enriched = candles.map(c => ({
+            ...c,
+            bbw: null,
+            bbUpper: null,
+            bbLower: null
+        }));
+
+        for (let i = candles.length - 1; i >= period; i--) {
+            const window = candles.slice(i - period, i);
+
+            const { mean, upper, lower } =
+                this.calculateBollingerBands(window, period, stdDevMult);
+
+            const bbw = ((upper - lower) / mean) * 100;
+
+            enriched[i].bbw = bbw;
+            enriched[i].bbUpper = upper;
+            enriched[i].bbLower = lower;
+        }
+
+        return enriched;
+    }
+    filterClosingBands(candles, thresholdPct = 1) {
+        const pct = thresholdPct / 100;
+        const result = [];
+
+        //BBBands are only calculated for at least 20 candles
+        for (let i = candles.length - 1; i > 20; i--) {
+            const prev = candles[i - 1];
+            const curr = candles[i];
+
+            if (
+                prev.bbUpper == null ||
+                prev.bbLower == null ||
+                curr.bbUpper == null ||
+                curr.bbLower == null
+            ) {
+                continue;
+            }
+
+            const prevWidth = prev.bbUpper - prev.bbLower;
+            const currWidth = curr.bbUpper - curr.bbLower;
+
+            if (currWidth <= prevWidth * (1 - pct)) {
+                result.push({
+                    ...curr,
+                    bbwChangePct:
+                        ((currWidth - prevWidth) / prevWidth) * 100
+                });
+            }
+        }
+
+        return result.reverse();
+    }
+
+    rollingAvgBBW(data, period) {
+        let sum = 0;
+
+        for (let i = 0; i < data.length; i++) {
+            sum += data[i].bbw;
+
+            if (i >= period) {
+                sum -= data[i - period].bbw;
+            }
+
+            data[i].avgBBW = i >= period - 1 ? sum / period : null;
+        }
+
+        return data;
+    }
+
+
+    ntfyMe(topic, msg) {
+        return new Promise((res, rej) => {
+            if (typeof msg === 'object') {
                 axios.post(`http://87.106.59.125/${topic}`, {
                     message: msg
                 })
-                .then((response) => {
-                    setTimeout(() => {res()}, 1000)
-                }, (error) => {
-                    console.log(error.response.data)
-                    rej(error.response.data);
-                });
+                    .then((response) => {
+                        setTimeout(() => { res() }, 1000)
+                    }, (error) => {
+                        console.log(error.response.data)
+                        rej(error.response.data);
+                    });
             } else {
                 // msg is probably a string
                 axios.post(`http://87.106.59.125/${topic}`, msg)
-                .then((response) => {
-                    setTimeout(() => {res()}, 1000)
-                }, (error) => {
-                    console.log(error.response.data)
-                    rej(error.response.data);
-                });
+                    .then((response) => {
+                        setTimeout(() => { res() }, 1000)
+                    }, (error) => {
+                        console.log(error.response.data)
+                        rej(error.response.data);
+                    });
             }
 
         })
-        
+
     }
 
     createCandle(aHourlyData, openingDateTime, closingDateTime) {
@@ -654,7 +826,7 @@ class Utils{
                 aHourCandles.push(oCandle)
             }
         }
-        if(aHourCandles.length == 0){
+        if (aHourCandles.length == 0) {
             return {}
         } else {
             return {
@@ -665,29 +837,29 @@ class Utils{
             }
         }
     }
-    
-    ntfyMeCSVList(sTopic, sHeader, aData){
-    
+
+    ntfyMeCSVList(sTopic, sHeader, aData) {
+
         // build CSV string with only "symbol"
         const header = sHeader
-        const rows = aData.map(obj => `${obj.symbol},  ${obj.lowsGrabbed}`);
+        const rows = aData //aData.map(obj => `${obj.symbol},  ${obj.lowsGrabbed}`);
         const csv = [header, ...rows].join("\n");
-    
+
         // send to ntfy
         axios.post(`http://87.106.59.125/${sTopic}`, csv, {
             headers: {
                 "Content-Type": "text/csv"
             }
         })
-        .then(res => {
-        console.log("✅ CSV sent as attachment:", res.status);
-        })
-        .catch(err => {
-        console.error("❌ Error:", err.message);
-        });
-    
+            .then(res => {
+                console.log("✅ CSV sent as attachment:", res.status);
+            })
+            .catch(err => {
+                console.error("❌ Error:", err.message);
+            });
+
     }
-      
+
 
 }
 exports.Utils = Utils;
