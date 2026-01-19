@@ -73,7 +73,7 @@ export async function main() {
             ema10Slope: utils.calculateEMASlope(aData, 10),
             ema20Slope: utils.calculateEMASlope(aData, 20),
           })
-        } else if (utils.getMarketCap(oCompany.results.market_cap) == 'mid' && utils.calculateEMASlope(aData, 50) > 0.4) {
+        } else if (utils.getMarketCap(oCompany.results.market_cap) == 'mid' && utils.calculateEMASlope(aData, 50) > 0.3) {
           aRes.push({
             ticker: sTicker,
             marketCap: utils.getMarketCap(oCompany.results.market_cap),
@@ -82,7 +82,7 @@ export async function main() {
             ema10Slope: utils.calculateEMASlope(aData, 10),
             ema20Slope: utils.calculateEMASlope(aData, 20),
           })
-        } else if (utils.getMarketCap(oCompany.results.market_cap) == 'small' && utils.calculateEMASlope(aData, 50) > 0.5) {
+        } else if (utils.getMarketCap(oCompany.results.market_cap) == 'small' && utils.calculateEMASlope(aData, 50) > 0.4) {
           aRes.push({
             ticker: sTicker,
             marketCap: utils.getMarketCap(oCompany.results.market_cap),
@@ -117,17 +117,18 @@ export async function main() {
   const aSmallCap = aRes.filter(stock => stock.marketCap == 'small')
   const aSmallCapTickers = utils.copyTickersFromListForExport(aSmallCap)
 
-  utils.saveArrayToCSV(aLargeCapTickers, 'HotLarge')
-  utils.saveArrayToCSV(aMidCapTickers, 'HotMid')
-  utils.saveArrayToCSV(aSmallCapTickers, 'HotSmall')
+  await calcDelta(aMidCapTickers, 'mid')
+  await calcDelta(aSmallCapTickers, 'small')
+
+  // utils.saveArrayToCSV(aLargeCapTickers, 'HotLarge')
+  // utils.saveArrayToCSV(aMidCapTickers, 'HotMid')
+  // utils.saveArrayToCSV(aSmallCapTickers, 'HotSmall')
 
   // utils.ntfyMeCSVList('Hot_largeCap_List', "symbol", aLargeCapTickers)
   // utils.ntfyMeCSVList('Hot_midCap_List', "symbol", aMidCapTickers)
   // utils.ntfyMeCSVList('Hot_smallCap_List', "symbol", aSmallCapTickers)
 
   // await calcDelta(aLargeCapTickers, 'large')
-  // await calcDelta(aMidCapTickers, 'mid')
-  // await calcDelta(aSmallCapTickers, 'small')
 
 }
 main()
